@@ -1,16 +1,13 @@
-# Wall Height (Enhanced)
+# Wall Height
 
-Thank you to Cole Schultz (cole#9640) for the original implementation. I  have now taken over the Module.
+## Before opening an issue read [THIS](https://github.com/theripper93/Levels/blob/v9/ISSUES.md)
+Give a vertical dimension to your walls.
 
-*If you enjoy this module, please upvote or comment on the [Gitlab Issue](https://gitlab.com/foundrynet/foundryvtt/-/issues/1829) for it to be added to core so that this feature can get the support it deserves.*
+![Latest Release Download Count](https://img.shields.io/github/downloads/theripper93/wall-height/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fwall-height&colorB=03ff1c&style=for-the-badge)](https://forge-vtt.com/bazaar#package=wall-height) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftheripper93%2Fwall-height%2Fmain%2Fmodule.json&label=Foundry%20Version&query=$.compatibleCoreVersion&colorB=orange&style=for-the-badge) [![alt-text](https://img.shields.io/badge/-Patreon-%23ff424d?style=for-the-badge)](https://www.patreon.com/theripper93) [![alt-text](https://img.shields.io/badge/-Discord-%235662f6?style=for-the-badge)](https://discord.gg/F53gBjR97G)
 
-Adds the ability to set wall height for walls so that tokens can look over them (or under them).  3.5 adds the ability to MOVE over and under walls as well.
+Thank you to Cole Schultz (cole#9640) for the original implementation and Erithtotl (Erithtotl#5139) for maintaining the module. I (theripper93) have now taken over the Module.
 
-3.5 also adds the ability to enable this feature on a scene by scene basis, as many maps may find it unnecessary.
-
-Some new features added by the community.  Token height functionality (enabled in Module settings).  This allows tokens to look over walls.  This may not be compatible with all modules so use at your own risk.
-
-Also received a community spanish translation!
+This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of ![Levels](https://github.com/theripper93/Levels) is suggested as well!
 
 ![Preview](scene-config.png)
 
@@ -48,14 +45,7 @@ will mirror the canvas.walls.updateAll, the update object is {wallHeightTop,wall
 
 ## Project Status
 
-Wall Height was originally released as a proof of concept to show that just a feature was possible by (cole#9640). I am now maintaining and adding to this modules and accepting feature requests.
-
-In addition to adding movement and the scene by scene enablement, I have update the code to use the latest vision refresh methods.
-
-A couple of future ideas:
-1) Implement some sort of wall library feature so that you can select from a number of pre-configured walls instead of having to set them by hand
-2) Mouse over for walls in the wall interface, so you can see the heights without having to drill in
-3) better support for lighting.  Currently, wall height does not affect lighting visibility (so if you are under the ground in a hallway, but there is a light above ground, the stretch of hallway you can see that intersects with the light will be illuminated.
+As I'm now mantaining the module, Wall Height will keep preserving it's orginal porpouse of setting an elevation to walls, to keep this module as conflict free as possible no other functionalies for three dimensional navigation will be added since those will be kept for implementation in Levels while this module will serve as a light weight variant for veerticality for users that don't need the full suit of features.
 
 ## Compatibility
 
