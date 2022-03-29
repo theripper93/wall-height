@@ -1,7 +1,5 @@
-//import { Patch_Token_onUpdate, Patch_Walls } from "./patches.js";
-import { Patch_Token_onUpdate, Patch_Walls } from "./patches.js";
+import { registerWrappers } from "./patches.js";
 import { getWallBounds,getSceneSettings } from "./utils.js";
-import { libWrapper} from '../shim.js';
 import { WallHeightToolTip } from './tooltip.js';
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY, ENABLE_ADVANCED_VISION_KEY, ENABLE_ADVANCED_MOVEMENT_KEY } from "./const.js";
 
@@ -9,9 +7,7 @@ const MODULE_ID = 'wall-height';
 
 
 Hooks.once("init",()=>{
-    Patch_Walls();
-    libWrapper.register(
-        MODULE_ID, 'CONFIG.Token.objectClass.prototype._onUpdate',Patch_Token_onUpdate,'WRAPPER');
+    registerWrappers();
     Hooks.on('renderHeadsUpDisplay', async (app, html, data) => {
         if(game.settings.get(MODULE_ID,'enableTooltip')){
             html.append('<template id="wall-height-tooltip"></template>');
@@ -33,16 +29,9 @@ Hooks.on("hoverWall",(wall, hovered)=>{
     }
 });
 
-/*Hooks.on('ready', async () => {
-
-
-    Hooks.on('deleteToken', (...args) => {
-        if (!canvas.hud.Wall) return;
-        canvas.hud.Wall.clear();
-    })
-    
-});
-*/
+Hooks.on("renderSceneControls", () => {
+    if (anvas.hud?.wallHeight) anvas.hud.wallHeight.clear();
+  });
 
 function registerSettings() {
     game.settings.register(MODULE_ID, 'enableTooltip', {
