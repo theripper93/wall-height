@@ -6,20 +6,26 @@ class WallHeightUtils{
   constructor(){
     this._currentTokenElevation = null;
   }
+
   set currentTokenElevation(elevation){
     if(elevation === this._currentTokenElevation) return;
-    debugger
     this._currentTokenElevation = elevation;
     this.scheduleUpdate();
   }
+
   get currentTokenElevation(){
     return this._currentTokenElevation;
   }
+
   scheduleUpdate(){
-    canvas.addPendingOperation("SightLayer.refresh",canvas.sight.refresh,canvas.sight);
-    canvas.addPendingOperation("LightingLayer.refresh",canvas.lighting.refresh,canvas.lighting);
-    canvas.addPendingOperation("SoundLayer.refresh",canvas.sounds.refresh,canvas.sounds);
+    canvas.perception.schedule({
+      lighting: { initialize: true, refresh: true },
+      sight: { initialize: true, refresh: true, forceUpdateFog: true },
+      sound: { initialize: true, refresh: true },
+      foreground: { refresh: true }
+    });
   }
+
   updateElevations(token) {
     if(!token._controlled && !token.object?._controlled) return;
     this.currentTokenElevation =
@@ -27,9 +33,11 @@ class WallHeightUtils{
         ? _levels.getTokenLOSheight(token)
         : token.data.elevation;
   }
+
   async migrateData(scene){
     return await migrateData(scene);
   }
+
   async migrateCompendiums (){
       let migratedScenes = 0;
       const compendiums = Array.from(game.packs).filter(p => p.documentName === 'Scene');
@@ -49,6 +57,7 @@ class WallHeightUtils{
       }
       return migratedScenes;
   }
+
   async migrateScenes (){
       const scenes = Array.from(game.scenes);
       let migratedScenes = 0;
@@ -66,6 +75,7 @@ class WallHeightUtils{
       }
       return migratedScenes;
   }
+
   async migrateAll(){
       ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas and Token Attacher to be updated!`);
       await WallHeight.migrateScenes();
@@ -73,6 +83,7 @@ class WallHeightUtils{
       ui.notifications.notify(`Wall Height - Migration Complete.`);
       await game.settings.set(MODULE_ID, 'migrateOnStartup', false);
   }
+
   getWallBounds(wall){
     return getWallBounds(wall);
   }
