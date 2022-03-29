@@ -10,9 +10,6 @@ export function getWallBounds(wall) {
 }
 
 export function getSceneSettings(scene) {
-    let advancedVision = scene.data.flags?.wallHeight?.wallHeightAdvancedVision;
-    if(advancedVision==null)
-        advancedVision=true;
-    let advancedMovement = scene.data.flags?.wallHeight?.wallHeightAdvancedMovement;
-    return {advancedVision,advancedMovement};
+    let advancedVision = scene.data.flags?.wallHeight?.wallHeightAdvancedVision ?? true;
+    return {advancedVision};
 }

@@ -5,7 +5,7 @@
         "AdvancedVisionLabel": "Enable Wall-Height For This Scene",
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "ModuleLabel": "Wall Height",
-        "enableTokenHeight.name": "Enable Token Height",
-        "enableTokenHeight.hint": "Include a token's height (scaled for the scene) when checking if it can see over a wall."
+        "settings.enableTooltip.name": "Enable Tooltip",
+        "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh."
     }
 }

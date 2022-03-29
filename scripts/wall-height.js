@@ -35,20 +35,12 @@ Hooks.on("renderSceneControls", () => {
 
 function registerSettings() {
     game.settings.register(MODULE_ID, 'enableTooltip', {
-        name: 'Enable Tooltip',
-        hint: 'Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh.',
+        name: game.i18n.localize("settings.enableTooltip.name"),
+        hint: game.i18n.localize("settings.enableTooltip.hint"),
         scope: 'world',
         config: true,
         type: Boolean,
         default: true
-    });
-    game.settings.register(MODULE_ID, 'enableTokenHeight', {
-        name: game.i18n.localize(`${MODULE_SCOPE}.enableTokenHeight.name`),
-        hint: game.i18n.localize(`${MODULE_SCOPE}.enableTokenHeight.hint`),
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        default: false,
     });
 
     globalThis.WallHeight = {
@@ -86,9 +78,8 @@ function registerSettings() {
 }
 
 Hooks.on("renderWallConfig", (app, html, data) => {
-    const {advancedVision,advancedMovement} = getSceneSettings(canvas.scene);
-    if(advancedVision!=null && !advancedVision)
-        return;
+    const {advancedVision} = getSceneSettings(canvas.scene);
+    if(!advancedVision) return;
     const { wallHeightTop, wallHeightBottom } = getWallBounds(app.object);
     const topLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightTopLabel`);
     const bottomLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightBottomLabel`);
@@ -112,10 +103,9 @@ Hooks.on("renderWallConfig", (app, html, data) => {
 });
 
 Hooks.on("renderSceneConfig", (app, html, data) => {
-    const {advancedVision,advancedMovement} = getSceneSettings(app.object);
+    const {advancedVision} = getSceneSettings(app.object);
     const enableVisionKeyLabel = game.i18n.localize(`${MODULE_SCOPE}.AdvancedVisionLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
-    //const enableMoveKeyLabel = game.i18n.localize(`${MODULE_SCOPE}.AdvancedMovementLabel`);
     html.find(".form-group").last().after(`
     <fieldset>
     <legend>${moduleLabel}</legend>
@@ -127,7 +117,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         </div>
     </fieldset>`
     );
-    //app.setPosition({ height: "auto" });
+    app.setPosition({ height: "auto" });
 });
 
 Handlebars.registerHelper('if_null', function(a, opts) {
