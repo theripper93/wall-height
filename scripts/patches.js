@@ -121,7 +121,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return;
     if("elevation" in updates){
-      token.object ? token.object.updateSource(true) : token.updateSource(true);
+      //token.object ? token.object.updateSource(true) : token.updateSource(true);
       WallHeight.updateElevations(token.object);
     }
   })
@@ -130,7 +130,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return;
     if(control) {
-      token.object ? token.object.updateSource(true) : token.updateSource(true);
+      //token.object ? token.object.updateSource(true) : token.updateSource(true);
       WallHeight.updateElevations(token);
     }
   })
