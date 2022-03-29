@@ -21,28 +21,6 @@ With 3.5.2, the Set Elevation macro has been modified to support Multilevel Toke
 
 In addition, libWrapper support has been introduced to improve module compatability.
 
-## Helper Functions
-
-Due to the module beeing setup incorrectly and not wanting to break everyone's maps these helper functions can help you interact with Wall Height data since the regular getFlag\setFlag won't work
-
-```js
-WallHeight.getTop(wallPlaceableOrDocument)
-WallHeight.getBottom(wallPlaceableOrDocument)
-WallHeight.getWallBounds(wallPlaceableOrDocument)
-```
-will return the top and bottom of a wall placeable object or wall document (getWallBounds will return {top,bottom})
-
-```js
-WallHeight.setTop(wallDocument, top)
-WallHeight.setBottom(wallDocument, bottom)
-```
-will set the top\bottom of a wall document - these are both async
-
-```js
-WallHeight.updateAll(update, filter)
-```
-will mirror the canvas.walls.updateAll, the update object is {wallHeightTop,wallHeightBottom} - this is async
-
 ## Project Status
 
 As I'm now mantaining the module, Wall Height will keep preserving it's orginal porpouse of setting an elevation to walls, to keep this module as conflict free as possible no other functionalies for three dimensional navigation will be added since those will be kept for implementation in Levels while this module will serve as a light weight variant for veerticality for users that don't need the full suit of features.
