@@ -94,7 +94,7 @@ function registerSettings() {
         return migratedScenes;
       },
       migrateAll: async () => {
-        ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas to be updated!`);
+        ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas and Token Attacher to be updated!`);
         await WallHeight.migrateScenes();
         await WallHeight.migrateCompendiums();
         ui.notifications.notify(`Wall Height - Migration Complete.`);
