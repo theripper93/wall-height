@@ -1,11 +1,13 @@
 {
-    "wallHeight": {
+    "wall-height": {
         "WallHeightTopLabel": "Wall Height (Top)",
         "WallHeightBottomLabel": "Wall Height (Bottom)",
         "AdvancedVisionLabel": "Enable Wall-Height For This Scene",
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "ModuleLabel": "Wall Height",
         "settings.enableTooltip.name": "Enable Tooltip",
-        "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh."
+        "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh.",
+        "settings.migrateOnStartup.name": "Migrate Wall-Height Data On Startup",
+        "settings.migrateOnStartup.hint": "Migrates wall-height data from the old wall-height data structure to the new one. This is only necessary once but you can enable this settings and refresh the page if you need to run it again."
     }
 }

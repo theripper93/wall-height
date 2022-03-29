@@ -18,14 +18,14 @@ export function registerWrappers() {
   }
 
   function testWallHeight(wall) {
-    const { wallHeightTop, wallHeightBottom } = getWallBounds(wall);
-    const { advancedVision, advancedMovement } = getSceneSettings(wall.scene);
+    const { top, bottom } = getWallBounds(wall);
+    const { advancedVision } = getSceneSettings(wall.scene);
 
     if (
       game.currentTokenElevation == null ||
       !advancedVision ||
-      (game.currentTokenElevation >= wallHeightBottom &&
-        game.currentTokenElevation < wallHeightTop)
+      (game.currentTokenElevation >= bottom &&
+        game.currentTokenElevation < top)
     ) {
       return true;
     } else {
