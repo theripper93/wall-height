@@ -22,7 +22,7 @@ Hooks.once("ready", ()=>{
 })
 
 Hooks.on("hoverWall",(wall, hovered)=>{
-    const {advancedVision,advancedMovement} = getSceneSettings(canvas.scene);
+    const {advancedVision} = getSceneSettings(canvas.scene);
     if(advancedVision!=null && !advancedVision)
         return;
     if (hovered) {
@@ -35,6 +35,14 @@ Hooks.on("hoverWall",(wall, hovered)=>{
 Hooks.on("renderSceneControls", () => {
     if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
   });
+
+Hooks.on("deleteWall", () => {
+    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
+});
+
+Hooks.on("createWall", () => {
+    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
+});
 
 function registerSettings() {
     game.settings.register(MODULE_ID, 'enableTooltip', {
@@ -54,54 +62,6 @@ function registerSettings() {
         type: Boolean,
         default: true
     });
-
-    globalThis.WallHeight = {
-      migrateData,
-      migrateCompendiums: async () => {
-        let migratedScenes = 0;
-        const compendiums = Array.from(game.packs).filter(p => p.documentName === 'Scene');
-        for (const compendium of compendiums) {
-          const scenes = await compendium.getDocuments();
-          for(const scene of scenes){
-            const migrated = await migrateData(scene);
-            if(migrated) migratedScenes++;
-          }
-        }
-        if(migratedScenes > 0){
-            ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-            console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-        }else{
-            ui.notifications.notify(`Wall Height - No scenes to migrate.`);
-            console.log(`Wall Height - No scenes to migrate.`);
-        }
-        return migratedScenes;
-      },
-      migrateScenes: async () => {
-        const scenes = Array.from(game.scenes);
-        let migratedScenes = 0;
-        ui.notifications.warn("Wall Height - Migrating all scenes, do not refresh the page!");
-        for(const scene of scenes){
-          const migrated = await migrateData(scene);
-          if(migrated) migratedScenes++;
-        }
-        if(migratedScenes > 0){
-          ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-          console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-        }else{
-            ui.notifications.notify(`Wall Height - No scenes to migrate.`);
-            console.log(`Wall Height - No scenes to migrate.`);
-        }
-        return migratedScenes;
-      },
-      migrateAll: async () => {
-        ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas and Token Attacher to be updated!`);
-        await WallHeight.migrateScenes();
-        await WallHeight.migrateCompendiums();
-        ui.notifications.notify(`Wall Height - Migration Complete.`);
-        await game.settings.set(MODULE_ID, 'migrateOnStartup', false);
-      },
-      getWallBounds,
-    };
 }
 
 Hooks.on("renderWallConfig", (app, html, data) => {
@@ -112,7 +72,7 @@ Hooks.on("renderWallConfig", (app, html, data) => {
     const bottomLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightBottomLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
 
-    html.find(".form-group").last().after(`
+    html.find(`select[name="ds"]`).closest(".form-group").after(`
     <fieldset>
         <legend>${moduleLabel}</legend>
             <div class="form-group">
