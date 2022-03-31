@@ -6,7 +6,7 @@
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "ModuleLabel": "Wall Height",
         "advancedLightingLabel": "Constrained by Elevation",
-        "advancedLightingNotes": "Constrain this light with walls corresponding to it's bottom elevation, indipendently of the elevation of the currently selected token.",
+        "advancedLightingNotes": "Constrain the area of effect of this source with walls corresponding to it's bottom elevation, indipendently of the elevation of the currently selected token.",
         "settings.enableTooltip.name": "Enable Tooltip",
         "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh.",
         "settings.migrateOnStartup.name": "Migrate Wall-Height Data On Startup",

@@ -101,7 +101,7 @@ export function registerWrappers() {
   function testWallHeight(wall, origin, type) {
     const { top, bottom } = getWallBounds(wall);
     const { advancedVision } = getSceneSettings(wall.scene);
-    const elevation = type === "light" ? origin.z ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
+    const elevation = type === "light" || type === "sound" ? origin.z ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
     if (
       elevation == null ||
       !advancedVision ||
