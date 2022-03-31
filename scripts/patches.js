@@ -98,15 +98,15 @@ export function registerWrappers() {
     wrapped(...args);
   }
 
-  function testWallHeight(wall) {
+  function testWallHeight(wall, origin, type) {
     const { top, bottom } = getWallBounds(wall);
     const { advancedVision } = getSceneSettings(wall.scene);
-
+    const elevation = type === "light" ? origin.z ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
     if (
-      WallHeight.currentTokenElevation == null ||
+      elevation == null ||
       !advancedVision ||
-      (WallHeight.currentTokenElevation >= bottom &&
-        WallHeight.currentTokenElevation < top)
+      (elevation >= bottom &&
+        elevation < top)
     ) {
       return true;
     } else {
@@ -115,7 +115,7 @@ export function registerWrappers() {
   }
 
   function testWallInclusion(wrapped, ...args){
-    return wrapped(...args) && testWallHeight(args[0]);
+    return wrapped(...args) && testWallHeight(args[0], args[1], args[2]);
   }
 
   Hooks.on("updateToken", (token,updates)=>{
@@ -147,5 +147,12 @@ export function registerWrappers() {
   // This function detemines whether a wall should be included. Add a condition on the wall's height compared to the current token
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
+  libWrapper.register("wall-height", "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
+    const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
+    if(!constrain || !WallHeight.isLevels) return wrapped(origin, config, ...args);
+    origin.z = origin.z ?? (config.source?.object instanceof Token ? config.source.object.data.elevation : config.source?.object?.document.getFlag("levels", "rangeBottom"));
+
+    return wrapped(origin, config, ...args);
+}, "WRAPPER");
 
 }

@@ -89,6 +89,22 @@ Hooks.on("renderWallConfig", (app, html, data) => {
     app.setPosition({ height: "auto" });
 });
 
+Hooks.on("renderAmbientLightConfig", (app, html, data) => {
+    const {advancedVision} = getSceneSettings(canvas.scene);
+    if(!advancedVision || !WallHeight.isLevels) return;
+    const label = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingLabel`);
+    const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
+    const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
+
+    const _injectHTML = `<div class="form-group">
+    <label>${label}</label>
+    <input type="checkbox" name="flags.${MODULE_SCOPE}.advancedLighting" ${checked}>
+    <p class="hint">${notes}</p>
+    </div>`
+    html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
+
+})
+
 Hooks.on("renderSceneConfig", (app, html, data) => {
     const {advancedVision} = getSceneSettings(app.object);
     const enableVisionKeyLabel = game.i18n.localize(`${MODULE_SCOPE}.AdvancedVisionLabel`);
