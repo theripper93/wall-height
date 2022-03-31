@@ -5,6 +5,7 @@ const MODULE_ID = "wall-height";
 class WallHeightUtils{
   constructor(){
     this._currentTokenElevation = null;
+    this.isLevels = game.modules.get("levels")?.active;
   }
 
   set currentTokenElevation(elevation){
@@ -21,7 +22,7 @@ class WallHeightUtils{
     canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
       sight: { initialize: true, refresh: true, forceUpdateFog: true },
-      sound: { initialize: true, refresh: true },
+      sounds: { initialize: true, refresh: true },
       foreground: { refresh: true }
     });
   }
@@ -29,7 +30,7 @@ class WallHeightUtils{
   updateElevations(token) {
     if(!token._controlled && !token.object?._controlled) return;
     this.currentTokenElevation =
-      typeof _levels !== "undefined" && _levels?.advancedLOS
+      WallHeight.isLevels && _levels?.advancedLOS
         ? _levels.getTokenLOSheight(token)
         : token.data.elevation;
   }
@@ -121,7 +122,6 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return;
     if("elevation" in updates){
-      //token.object ? token.object.updateSource(true) : token.updateSource(true);
       WallHeight.updateElevations(token.object);
     }
   })
@@ -130,47 +130,9 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return;
     if(control) {
-      //token.object ? token.object.updateSource(true) : token.updateSource(true);
       WallHeight.updateElevations(token);
     }
   })
-
-  function tokenOnUpdate(func, data, options) {
-    func.apply(this, [data, options]);
-    const { advancedVision } = getSceneSettings(canvas.scene);
-    if (!advancedVision) return;
-    const changed = new Set(Object.keys(data));
-  
-    // existing conditions that have already been checked to perform a sight layer update
-    const visibilityChange = changed.has("hidden");
-    const positionChange = ["x", "y"].some((c) => changed.has(c));
-    const perspectiveChange =
-      changed.has("rotation") && this.hasLimitedVisionAngle;
-    const visionChange = [
-      "brightLight",
-      "brightSight",
-      "dimLight",
-      "dimSight",
-      "lightAlpha",
-      "lightAngle",
-      "lightColor",
-      "sightAngle",
-      "vision",
-    ].some((k) => changed.has(k));
-  
-    const alreadyUpdated =
-      (visibilityChange || positionChange || perspectiveChange || visionChange) &&
-      (this.data.vision || changed.has("vision") || this.emitsLight);
-  
-    // if the original _onUpdate didn't perform a sight layer update,
-    // but elevation has changed, do the update now
-    if (changed.has("elevation") && !alreadyUpdated) {
-      this.updateSource(true);
-      canvas.addPendingOperation("SightLayer.refresh",canvas.sight.refresh,canvas.sight);
-      canvas.addPendingOperation("LightingLayer.refresh",canvas.lighting.refresh,canvas.lighting);
-      canvas.addPendingOperation("SoundLayer.refresh",canvas.sounds.refresh,canvas.sounds);
-    }
-  }
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.updateSource", preUpdateElevation, "WRAPPER");
 
@@ -185,5 +147,5 @@ export function registerWrappers() {
   // This function detemines whether a wall should be included. Add a condition on the wall's height compared to the current token
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
-  //libWrapper.register(MODULE_ID, 'CONFIG.Token.objectClass.prototype._onUpdate',tokenOnUpdate,'WRAPPER');
+
 }
