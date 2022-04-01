@@ -5,6 +5,8 @@
         "AdvancedVisionLabel": "Enable Wall-Height For This Scene",
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "ModuleLabel": "Wall Height",
+        "elevation": "Elevation",
+        "distance": "(Distance)",
         "advancedLightingLabel": "Constrained by Elevation",
         "advancedLightingNotes": "Constrain the area of effect of this source with walls corresponding to it's bottom elevation, indipendently of the elevation of the currently selected token.",
         "settings.enableTooltip.name": "Enable Tooltip",

@@ -149,8 +149,8 @@ export function registerWrappers() {
 
   libWrapper.register("wall-height", "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
     const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
-    if(!constrain || !WallHeight.isLevels) return wrapped(origin, config, ...args);
-    origin.z = origin.z ?? (config.source?.object instanceof Token ? config.source.object.data.elevation : config.source?.object?.document.getFlag("levels", "rangeBottom"));
+    if(!constrain) return wrapped(origin, config, ...args);
+    origin.z = origin.z ?? (config.source?.object instanceof Token ? config.source.object.data.elevation : config.source?.object?.document?.data?.flags?.levels?.rangeBottom);
 
     return wrapped(origin, config, ...args);
 }, "WRAPPER");
