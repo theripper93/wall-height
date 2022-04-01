@@ -101,7 +101,8 @@ export function registerWrappers() {
   function testWallHeight(wall, origin, type) {
     const { top, bottom } = getWallBounds(wall);
     const { advancedVision } = getSceneSettings(wall.scene);
-    const elevation = type === "light" || type === "sound" ? origin.z ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
+    const originUnits = origin.z ? origin.z*canvas.scene.dimensions.distance/canvas.scene.dimensions.size : origin.z;
+    const elevation = type === "light" || type === "sound" ? originUnits ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
     if (
       elevation == null ||
       !advancedVision ||
@@ -151,7 +152,9 @@ export function registerWrappers() {
     const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
     if(!constrain) return wrapped(origin, config, ...args);
     origin.z = origin.z ?? (config.source?.object instanceof Token ? config.source.object.data.elevation : config.source?.object?.document?.data?.flags?.levels?.rangeBottom);
-
+    if(origin.z !== null && origin.z !== undefined){
+      origin.z = origin.z*(canvas.scene.dimensions.size/canvas.scene.dimensions.distance)
+    }
     return wrapped(origin, config, ...args);
 }, "WRAPPER");
 
