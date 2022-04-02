@@ -109,6 +109,7 @@ export function registerWrappers() {
   function testWallHeight(wall, origin, type) {
     const { top, bottom } = getWallBounds(wall);
     const { advancedVision } = getSceneSettings(wall.scene);
+    debugger
     const originUnits = origin.z ? origin.z*canvas.scene.dimensions.distance/canvas.scene.dimensions.size : origin.z;
     const elevation = type === "light" || type === "sound" ? originUnits ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
     if (
@@ -169,8 +170,9 @@ export function registerWrappers() {
 
   libWrapper.register("wall-height", "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
     const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
-    if(!constrain) return wrapped(origin, config, ...args);
-    origin.z = origin.z ?? (config.source?.object instanceof Token ? config.source.object.data.elevation : config.source?.object?.document?.data?.flags?.levels?.rangeBottom);
+    const isToken = config.source?.object instanceof Token;
+    if(!constrain && !isToken) return wrapped(origin, config, ...args);
+    origin.z = origin.z ?? (isToken ? config.source.object.data.elevation : config.source?.object?.document?.data?.flags?.levels?.rangeBottom);
     if(origin.z !== null && origin.z !== undefined){
       origin.z = origin.z*(canvas.scene.dimensions.size/canvas.scene.dimensions.distance)
     }
