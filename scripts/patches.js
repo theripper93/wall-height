@@ -35,6 +35,14 @@ class WallHeightUtils{
         : token.data.elevation;
   }
 
+  setElevation(document, value){
+    document.update("flags.levels.rangeBottom", value);
+  }
+
+  getElevation(document){
+    return document.data.flags?.levels?.rangeBottom ?? -Infinity;
+  }
+
   async migrateData(scene){
     return await migrateData(scene);
   }

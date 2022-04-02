@@ -3,7 +3,22 @@
   "title": "Wall Height",
   "description": "Adds the ability to set wall height for walls so that tokens can look and move over them.",
   "version": "3.6.0.3",
-  "author": "Ian Murphy (Erithtotl#5139), forked from Cole Schultz (cole#9640), contibutions from (theripper93#3276)",
+  "author": "theripper93",
+  "authors": [
+    {
+      "name": "theripper93",
+      "email": "tsplab@gmail.com",
+      "url": "https://theripper93.com/"
+    },
+    {
+      "name": "Ian Murphy",
+      "discord": "Erithtotl#5139"
+    },
+    {
+      "name": "Cole Schultz",
+      "discord": "cole#9640"
+    }
+  ],
   "languages": [
     {
       "lang": "en",
@@ -16,9 +31,7 @@
       "path": "lang/es.json"
     }
   ],
-  "esmodules": [
-    "scripts/wall-height.js"
-  ],
+  "esmodules": ["scripts/wall-height.js"],
   "packs": [
     {
       "name": "wall-height-macros",
@@ -27,17 +40,17 @@
       "entity": "Macro",
       "package": "Wall Height",
       "module": "wall-height"
-    }],
+    }
+  ],
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
-  "styles": [ "wall-height.css" ],
+  "styles": ["wall-height.css"],
   "url": "https://github.com/theripper93/wall-height",
   "manifest": "https://github.com/theripper93/wall-height/releases/latest/download/module.json",
   "download": "https://github.com/theripper93/wall-height/releases/download/4.0.0/module.zip",
   "dependencies": [
     {
-        "name": "lib-wrapper"
+      "name": "lib-wrapper"
     }
-]
-
+  ]
 }

@@ -18,6 +18,7 @@ Hooks.once("init",()=>{
 });
 
 Hooks.once("ready", ()=>{
+    if(!game.user.isGM) return;
     if(game.settings.get(MODULE_ID, 'migrateOnStartup')) WallHeight.migrateAll();
 })
 
