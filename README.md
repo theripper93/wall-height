@@ -7,6 +7,12 @@ Give a vertical dimension to your walls.
 
 Thank you to Cole Schultz (cole#9640) for the original implementation and Erithtotl (Erithtotl#5139) for maintaining the module. I (theripper93) have now taken over the Module.
 
+## IMPORTANT Wall Height 4.0+ Data Migration
+
+Due to misconfigured data stracture from the old implementation, i've rewritten a good portion of the module and fixed said data structure, this requires a data migration - during the first launch of Wall Height version 4.0+ the module will auto migrate the data on all your scenes and compendiums (this includes token attacher data). If you need to migrate the data again (for example if you import premium content from creators that was not migrated) you can always do the migration again by enabling the setting in the module settings and refreshing (f5).
+
+---
+
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
 
 ![Preview](scene-config.png)
@@ -15,11 +21,26 @@ The top and bottom heights of the walls are configurable in the wall configurati
 
 ![Preview](wall-height.gif)
 
+Since 4.0+ Wall Height has the ability to calculate light and sound polygons indipendently of the selected token by enabling the "Constrained by Elevation" option
+
+![image](https://user-images.githubusercontent.com/1346839/161382146-f764562a-cbc8-40d3-8af3-0f2a25a4b7c1.png)
+
+For this option to work you need to assign an elevation value to the light\sound - if Levels is enabled the value used is the Height (bottom) of the entity.
+
 Finally, 3.5 adds a Macro Compendium, with a Set Elevation macro, which allows for quick updating of the elevation of multiple tokens, handy when the party is moving to different levels on a multilevel map.
 
 With 3.5.2, the Set Elevation macro has been modified to support Multilevel Tokens (https://foundryvtt.com/packages/multilevel-tokens/) (can accept one or two parameters for entry and exit elevations).
 
-In addition, libWrapper support has been introduced to improve module compatability.
+libWrapper is now a required dependency.
+
+## Elevation Helpers
+
+To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
+
+```js
+WallHeight.setElevation(document, value)
+WallHeight.getElevation(document)
+```
 
 ## Project Status
 
