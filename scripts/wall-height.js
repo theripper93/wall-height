@@ -111,8 +111,10 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const bottom = app.object.data.flags?.levels?.rangeBottom ?? -Infinity;
     const elevationHtml = `
     <div class="form-group">
-        <label>${elevation}</label><span class="units">${distance}</span>
-        <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+        <label>${elevation} <span class="units">${distance}</span></label>
+        <div class="form-fields">
+            <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+        </div>
     </div>
     `
     html.find(`input[name="config.dim"]`).closest(".form-group").after(elevationHtml);
@@ -140,11 +142,13 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const bottom = app.object.data.flags?.levels?.rangeBottom ?? -Infinity;
     const elevationHtml = `
     <div class="form-group">
-        <label>${elevation}</label><span class="units">${distance}</span>
-        <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+        <label>${elevation} <span class="units">${distance}</span></label>
+        <div class="form-fields">
+            <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+        </div>
     </div>
     `
-    html.find(`input[name="darkness.max"]`).closest(".form-group").after(elevationHtml);
+    html.find(`input[name="radius"]`).closest(".form-group").after(elevationHtml);
     app.setPosition({ height: "auto" });
 })
 
@@ -158,7 +162,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         <div class="form-group">
             <li class="flexrow">
                 <label>${enableVisionKeyLabel}</label>
-                <input name="flags.${MODULE_SCOPE}.${ENABLE_ADVANCED_VISION_KEY}" type="checkbox" data-dtype="boolean" value="true" `+ ((advancedVision || advancedVision==null)?`checked`:``)+`>
+                <input name="flags.${MODULE_SCOPE}.${ENABLE_ADVANCED_VISION_KEY}" type="checkbox" data-dtype="Boolean" `+ ((advancedVision || advancedVision==null)?`checked`:``)+`>
             </li>
         </div>
     </fieldset>`
