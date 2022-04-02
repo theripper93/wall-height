@@ -33,6 +33,15 @@ With 3.5.2, the Set Elevation macro has been modified to support Multilevel Toke
 
 libWrapper is now a required dependency.
 
+## Elevation Helpers
+
+To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
+
+```js
+WallHeight.setElevation(document, value)
+WallHeight.getElevation(document)
+```
+
 ## Project Status
 
 As I'm now mantaining the module, Wall Height will keep preserving it's orginal porpouse of setting an elevation to walls, to keep this module as conflict free as possible no other functionalies for three dimensional navigation will be added since those will be kept for implementation in Levels while this module will serve as a light weight variant for veerticality for users that don't need the full suit of features.
