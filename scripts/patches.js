@@ -35,8 +35,8 @@ class WallHeightUtils{
         : token.data.elevation;
   }
 
-  setElevation(document, value){
-    document.update("flags.levels.rangeBottom", value);
+  async setElevation(document, value){
+    await document.update({"flags.levels.rangeBottom": value});
   }
 
   getElevation(document){
