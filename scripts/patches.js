@@ -127,6 +127,15 @@ export function registerWrappers() {
     return wrapped(...args) && testWallHeight(args[0], args[1], args[2]);
   }
 
+  function isDoorVisible(wrapped,...args){
+    const elevation = WallHeight.currentTokenElevation;
+    if(elevation === null || elevation === undefined) return wrapped(...args);
+    const wall = this.wall;
+    const { top, bottom } = getWallBounds(wall);
+    if(elevation > top || elevation < bottom) return false;
+    return wrapped(...args);
+  }
+
   Hooks.on("updateToken", (token,updates)=>{
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return;
@@ -155,6 +164,8 @@ export function registerWrappers() {
 
   // This function detemines whether a wall should be included. Add a condition on the wall's height compared to the current token
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
+
+  libWrapper.register(MODULE_ID,"DoorControl.prototype.isVisible",isDoorVisible,"MIXED");
 
   libWrapper.register("wall-height", "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
     const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
