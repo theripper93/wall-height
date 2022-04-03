@@ -167,6 +167,35 @@ export function registerWrappers() {
     return wrapped(...args);
   }
 
+  function setSourceElevatio(wrapped, origin, config = {}, ...args) {
+    if (origin.z === undefined) {
+      const object = config.source?.object;
+      let elevation = 0;
+      if (object instanceof Token) {
+        if(config.source?.sourceType === "vision"){
+          elevation = WallHeight.isLevels && _levels?.advancedLOS
+          ? _levels.getTokenLOSheight(object)
+          : object.data.elevation;
+        }else{
+          elevation = object.data.elevation;
+        }
+
+      } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
+        if (object.document.getFlag(MODULE_ID, "advancedLighting")) {
+          elevation = WallHeight.getElevation(object.document);
+        } else {
+          elevation = WallHeight.currentTokenElevation;
+        }
+      }
+      if (elevation != null) {
+        origin.z = elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
+      } else {
+        origin.z = null;
+      }
+    }
+    return wrapped(origin, config, ...args);
+  }
+
   Hooks.on("updateToken", () => {
     WallHeight.updateCurrentTokenElevation();
   });
@@ -194,25 +223,5 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
-    if (origin.z === undefined) {
-      const object = config.source?.object;
-      let elevation = 0;
-      if (object instanceof Token) {
-        elevation = object.data.elevation;
-      } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
-        if (object.document.getFlag(MODULE_ID, "advancedLighting")) {
-          elevation = WallHeight.getElevation(object.document);
-        } else {
-          elevation = WallHeight.currentTokenElevation;
-        }
-      }
-      if (elevation != null) {
-        origin.z = elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
-      } else {
-        origin.z = null;
-      }
-    }
-    return wrapped(origin, config, ...args);
-  }, "WRAPPER");
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevatio, "WRAPPER");
 }
