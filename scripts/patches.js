@@ -4,21 +4,34 @@ const MODULE_ID = "wall-height";
 
 class WallHeightUtils{
   constructor(){
+    this._advancedVision = null;
     this._currentTokenElevation = null;
     this.isLevels = game.modules.get("levels")?.active;
   }
 
-  set currentTokenElevation(elevation){
-    if(elevation === this._currentTokenElevation) return;
-    this._currentTokenElevation = elevation;
-    this.scheduleUpdate();
+  set currentTokenElevation(elevation) {
+    let update = false;
+    const { advancedVision } = getSceneSettings(canvas.scene);
+    if (this._currentTokenElevation !== elevation) {
+      this._currentTokenElevation = elevation;
+      if (advancedVision) {
+        update = true;
+      }
+    }
+    if (this._advancedVision !== !!advancedVision) {
+      this._advancedVision = !!advancedVision;
+      update = true;
+    }
+    if (update) {
+      this.schedulePerceptionUpdate();
+    }
   }
 
   get currentTokenElevation(){
     return this._currentTokenElevation;
   }
 
-  scheduleUpdate(){
+  schedulePerceptionUpdate(){
     canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
       sight: { initialize: true, refresh: true, forceUpdateFog: true },
@@ -27,20 +40,26 @@ class WallHeightUtils{
     });
   }
 
-  updateElevations(token) {
-    if(!token._controlled && !token.object?._controlled) return;
-    this.currentTokenElevation =
-      WallHeight.isLevels && _levels?.advancedLOS
-        ? _levels.getTokenLOSheight(token)
-        : token.data.elevation;
+  updateCurrentTokenElevation() {
+    const token = canvas.tokens.controlled[0];
+    if (!token && game.user.isGM) {
+      this.currentTokenElevation = null;
+    } else if (token) {
+      this.currentTokenElevation =
+        WallHeight.isLevels && _levels?.advancedLOS
+          ? _levels.getTokenLOSheight(token)
+          : token.data.elevation;
+    }
   }
 
-  async setElevation(document, value){
-    await document.update({"flags.levels.rangeBottom": value});
+  async setElevation(document, value) {
+    if (document instanceof TokenDocument) return await document.update({ "elevation": value });
+    return await document.update({ "flags.levels.rangeBottom": value });
   }
 
-  getElevation(document){
-    return document.data.flags?.levels?.rangeBottom ?? -Infinity;
+  getElevation(document) {
+    if (document instanceof TokenDocument) return document.data.elevation;
+    return foundry.utils.getProperty(document.data, "flags.levels.rangeBottom") ?? -Infinity;
   }
 
   async migrateData(scene){
@@ -101,82 +120,99 @@ class WallHeightUtils{
 export function registerWrappers() {
   globalThis.WallHeight = new WallHeightUtils();
 
-  function preUpdateElevation(wrapped, ...args) {
-    WallHeight.updateElevations(this);
+  function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
+
+    const { advancedVision } = getSceneSettings(this.scene);
+    const z = this.data.elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
+    if (!advancedVision) {
+      if (canvas.sight.sources.has(this.sourceId)) {
+        this.vision.los.origin.z = z;
+      }
+      if (canvas.lighting.sources.has(this.sourceId)) {
+        this.light.los.origin.z = z;
+      }
+    } else if (canvas.sight.sources.has(this.sourceId) && this.vision.los.origin.z !== z
+      || canvas.lighting.sources.has(this.sourceId) && this.light.los.origin.z !== z) {
+      this.updateSource({ defer: true });
+      canvas.perception.schedule({
+        lighting: { refresh: true },
+        sight: { refresh: true, forceUpdateFog: true },
+        sounds: { refresh: true },
+        foreground: { refresh: true }
+      });
+    }
   }
 
   function testWallHeight(wall, origin, type) {
-    const { top, bottom } = getWallBounds(wall);
     const { advancedVision } = getSceneSettings(wall.scene);
-    debugger
-    const originUnits = origin.z ? origin.z*canvas.scene.dimensions.distance/canvas.scene.dimensions.size : origin.z;
-    const elevation = type === "light" || type === "sound" ? originUnits ?? WallHeight.currentTokenElevation : WallHeight.currentTokenElevation;
-    if (
-      elevation == null ||
-      !advancedVision ||
-      (elevation >= bottom &&
-        elevation < top)
-    ) {
-      return true;
-    } else {
-      return null;
-    }
+    if (!advancedVision) return true;
+    const { top, bottom } = getWallBounds(wall);
+    const elevation = origin.z != null ? origin.z / (canvas.scene.dimensions.size / canvas.scene.dimensions.distance) : null;
+    return elevation != null && (elevation + 1e-6 >= bottom && elevation - 1e-6 < top)
+      || elevation == null && (bottom === -Infinity && top === +Infinity);
   }
 
   function testWallInclusion(wrapped, ...args){
     return wrapped(...args) && testWallHeight(args[0], args[1], args[2]);
   }
 
-  function isDoorVisible(wrapped,...args){
-    const elevation = WallHeight.currentTokenElevation;
-    if(elevation === null || elevation === undefined) return wrapped(...args);
+  function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
+    const { advancedVision } = getSceneSettings(wall.scene);
+    const elevation = WallHeight.currentTokenElevation;
+    if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
-    if(elevation > top || elevation < bottom) return false;
+    if (!(elevation >= bottom && elevation < top)) return false;
     return wrapped(...args);
   }
 
-  Hooks.on("updateToken", (token,updates)=>{
-    const { advancedVision } = getSceneSettings(canvas.scene);
-    if (!advancedVision) return;
-    if("elevation" in updates){
-      WallHeight.updateElevations(token.object);
-    }
-  })
+  Hooks.on("updateToken", () => {
+    WallHeight.updateCurrentTokenElevation();
+  });
 
-  Hooks.on("controlToken", (token,control)=>{
-    const { advancedVision } = getSceneSettings(canvas.scene);
-    if (!advancedVision) return;
-    if(control) {
-      WallHeight.updateElevations(token);
-    }
-  })
+  Hooks.on("controlToken", () => {
+    WallHeight.updateCurrentTokenElevation();
+  });
 
-  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.updateSource", preUpdateElevation, "WRAPPER");
+  Hooks.on("updateScene", (doc, change) => {
+    WallHeight.updateCurrentTokenElevation();
+  });
 
-  // This function builds the ClockwiseSweepPolygon to determine the token's vision.
-  // Update the elevation just beforehand so we're using the correct token's elevation and height
-  libWrapper.register(MODULE_ID, "Token.prototype.updateVisionSource", preUpdateElevation, "WRAPPER");
+  Hooks.on("canvasInit", () => {
+    WallHeight._advancedVision = null;
+    WallHeight._currentTokenElevation = null;
+  });
 
-  // This function builds the ClockwiseSweepPolygon to determine the token's light coverage.
-  // Update the elevation just beforehand so we're using the correct token's elevation and height
-  libWrapper.register(MODULE_ID, "Token.prototype.updateLightSource", preUpdateElevation, "WRAPPER");
+  Hooks.on("canvasReady", () => {
+    WallHeight.updateCurrentTokenElevation();
+  });
 
-  // This function detemines whether a wall should be included. Add a condition on the wall's height compared to the current token
+  libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
+
+  libWrapper.register(MODULE_ID, "Token.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
+
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
-  libWrapper.register(MODULE_ID,"DoorControl.prototype.isVisible",isDoorVisible,"MIXED");
-
-  libWrapper.register("wall-height", "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
-    const constrain = config.source?.object?.document?.getFlag(MODULE_ID, "advancedLighting")
-    const isToken = config.source?.object instanceof Token;
-    if(!constrain && !isToken) return wrapped(origin, config, ...args);
-    origin.z = origin.z ?? (isToken ? config.source.object.data.elevation : config.source?.object?.document?.data?.flags?.levels?.rangeBottom);
-    if(origin.z !== null && origin.z !== undefined){
-      origin.z = origin.z*(canvas.scene.dimensions.size/canvas.scene.dimensions.distance)
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", function (wrapped, origin, config = {}, ...args) {
+    if (origin.z === undefined) {
+      const object = config.source?.object;
+      let elevation = 0;
+      if (object instanceof Token) {
+        elevation = object.data.elevation;
+      } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
+        if (object.document.getFlag(MODULE_ID, "advancedLighting")) {
+          elevation = WallHeight.getElevation(object.document);
+        } else {
+          elevation = WallHeight.currentTokenElevation;
+        }
+      }
+      if (elevation != null) {
+        origin.z = elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
+      } else {
+        origin.z = null;
+      }
     }
     return wrapped(origin, config, ...args);
-}, "WRAPPER");
-
+  }, "WRAPPER");
 }
