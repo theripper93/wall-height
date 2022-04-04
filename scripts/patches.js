@@ -197,7 +197,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    return origin.b >= bottom && !(origin.t - top >= 0);
+    return origin.b >= bottom && origin.t <= top;
   }
 
   function testWallInclusion(wrapped, ...args){

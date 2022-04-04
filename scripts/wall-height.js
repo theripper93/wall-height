@@ -45,6 +45,10 @@ Hooks.on("createWall", () => {
     if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
 });
 
+Hooks.on("updateWall", () => {
+    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
+});
+
 function registerSettings() {
     game.settings.register(MODULE_ID, 'enableTooltip', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.enableTooltip.name`),
