@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [4.0.0]
+
+  - The module is now compatible with Foundry v9+
+  - Fixed the wrong data structure with the correct one, migration scripts are in place to make the transition to the new version painless
+  - Added Macros to the macro compendium to manually migrate
+  - Fixed Door controls always beein visible, now they act accordingly to the wall height and token elevation
+  - Fixed elevation tooltips for walls that now should no longer get stuck.
+  - Light and Sound sources now calculate polygons indipendently of the currently selected token allowing for more realistic verticality - This is optional and can be enabled with the "Constrained by Elevation" option in the Light and Sound configuration - For this option to work an elevation also needs to be set on the entity. This feature works by default on token emitted lights since those always have a set elevation.
+  - Most of the module logic has been rewritten to be more up to date with the latest foundry updates (thanks to dev7355608(EBER#7243) for the help and contribution)
+  - Removed Support for token height - since Levels already has a more complete version of this option use Levels if you need that kind of feature.
+
 ## [3.6.0.1] 2021 Nov 18
 
   - 9.0 compatability tweaks courtesy of theripper93
