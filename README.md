@@ -25,6 +25,10 @@ If you aquire content made with the old data structure here is how to manually m
 
 *Note: you can check the progress of the Token Attacher macros in the console (F12)
 
+## Breaking 4.0 Change
+
+The Top of walls is now included in vision blocking calculations (for example a 0-5 wall will block vision of a 5 elevation token) This means that if you had maps that relied on Exact numbers you might notice some walls are now blocking sight - if you need you can reduce by 1 the TOP of all the walls to have vision blocking work as before - this can be done though a macro present in the `Wall Height Macros` compendium called `Wall Height - Reduce Top By  One`
+
 ---
 
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
@@ -56,11 +60,11 @@ libWrapper is now a required dependency.
 To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
 
 ```js
-WallHeight.setTopSourceElevation(document, value)
-WallHeight.getTopSourceElevation(document)
+WallHeight.setSourceElevationTop(document, value)
+WallHeight.getSourceElevationTop(document)
 
-WallHeight.setBottomSourceElevation(document, value)
-WallHeight.getBottomSourceElevation(document)
+WallHeight.setSourceElevationBottom(document, value)
+WallHeight.getSourceElevationBottom(document)
 ```
 
 Or, if you want to set\get both at the same time
