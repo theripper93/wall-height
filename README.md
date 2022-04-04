@@ -13,6 +13,18 @@ Due to misconfigured data stracture from the old implementation, i've rewritten 
 
 Macros are also included to run migrations if needed.
 
+### How To Migrate content creator maps and prefabs
+
+If you aquire content made with the old data structure here is how to manually migrate scenes\compendiums and Token Attacher Prefabs:
+
+1) Enable the modules that you wish to migrate ( EG. Baileywiki Maps Towns )
+2) Unlock ALL the actor compendiums containing Token Attacher Prefabs
+3) In the Wall Height Macro compendium `Wall Height Macros` run the `Wall Height - Migrate Everything` Macro and wait for it to finish
+4) In the Token Attacher Macro compendium `Example Macros` run `(TA) Migrate Actors for Wall Height` and `(TA) Migrate Compendiums for Wall Height` Macros waiting for each one to finish.
+5) Done, you are now migrated to the new data structure - You can repeat this process how many times you want.
+
+*Note: you can check the progress of the Token Attacher macros in the console (F12)
+
 ---
 
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
@@ -23,11 +35,15 @@ The top and bottom heights of the walls are configurable in the wall configurati
 
 ![Preview](wall-height.gif)
 
-Since 4.0+ Wall Height has the ability to calculate light and sound polygons indipendently of the selected token by enabling the "Constrained by Elevation" option
+## New Lighting/Sound Restriction
+
+Since 4.0+ Wall Height has the ability to calculate light and sound polygons indipendently of the selected token by enabling the "Constrained by Elevation" option. This option is Globally Enabled by default - you can turn it off in the module settings.
 
 ![image](https://user-images.githubusercontent.com/1346839/161382146-f764562a-cbc8-40d3-8af3-0f2a25a4b7c1.png)
 
-For this option to work you need to assign an elevation value to the light\sound - if Levels is enabled the value used is the Height (bottom) of the entity.
+For this option to work you need to assign an elevation value (top\bottom) to the light\sound - these values are shared with Levels. For a source to be constrained by a wall it's whole range must be included in the wall (eg. 0/9 light will be constrained by 0/9 wall but not by a 0/8 wall)
+
+---
 
 Finally, 3.5 adds a Macro Compendium, with a Set Elevation macro, which allows for quick updating of the elevation of multiple tokens, handy when the party is moving to different levels on a multilevel map.
 
@@ -40,8 +56,18 @@ libWrapper is now a required dependency.
 To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
 
 ```js
-WallHeight.setElevation(document, value)
-WallHeight.getElevation(document)
+WallHeight.setTopSourceElevation(document, value)
+WallHeight.getTopSourceElevation(document)
+
+WallHeight.setBottomSourceElevation(document, value)
+WallHeight.getBottomSourceElevation(document)
+```
+
+Or, if you want to set\get both at the same time
+
+```js
+WallHeight.setSourceElevationBounds(document, bottom, top)
+WallHeight.getSourceElevationBounds(document)
 ```
 
 ## Project Status

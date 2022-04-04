@@ -52,20 +52,42 @@ class WallHeightUtils{
     }
   }
 
-  async setTopSourceElevation(document, value) {
+  async setSourceElevationTop(document, value) {
+    if (document instanceof TokenDocument) return;
     return await document.update({ "flags.levels.rangeTop": value });
   }
 
-  getTopSourceElevation(document) {
-    return document.data.flags.levels.rangeTop;
+  getSourceElevationTop(document) {
+    if (document instanceof TokenDocument) return WallHeight.isLevels && _levels?.advancedLOS && document.object
+      ? _levels.getTokenLOSheight(document.object)
+      : document.data.elevation;
+    return document.data.flags?.levels?.rangeTop ?? +Infinity;
   }
 
-  async setBottomSourceElevation(document, value) {
+  async setSourceElevationBottom(document, value) {
+    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
     return await document.update({ "flags.levels.rangeBottom": value });
   }
 
-  getBottomSourceElevation(document) {
-    return document.data.flags.levels.rangeBottom;
+  getSourceElevationBottom(document) {
+    if (document instanceof TokenDocument) return document.data.elevation;
+    return document.data.flags?.levels?.rangeBottom ?? -Infinity;
+  }
+
+  async setSourceElevationBounds(document, bottom, top) {
+    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
+    return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
+  }
+
+  getSourceElevationBounds(document) {
+    if (document instanceof TokenDocument) {
+      const bottom = document.data.elevation;
+      const top = WallHeight.isLevels && _levels?.advancedLOS && document.object
+        ? _levels.getTokenLOSheight(document.object)
+        : bottom;
+      return { bottom, top };
+    }
+    return getLevelsBounds(document);
   }
 
   async setSourceElevationBounds(document, bottom, top) {
@@ -146,16 +168,21 @@ export function registerWrappers() {
     wrapped(...args);
 
     const { advancedVision } = getSceneSettings(this.scene);
-    const z = this.data.elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
+    const bottom = this.data.elevation;
+    const top = WallHeight.isLevels && _levels?.advancedLOS
+      ? _levels.getTokenLOSheight(this)
+      : bottom;
     if (!advancedVision) {
       if (canvas.sight.sources.has(this.sourceId)) {
-        this.vision.los.origin.z = z;
+        this.vision.los.origin.b = bottom;
+        this.vision.los.origin.t = top;
       }
       if (canvas.lighting.sources.has(this.sourceId)) {
-        this.light.los.origin.z = z;
+        this.light.los.origin.b = bottom;
+        this.light.los.origin.t = top;
       }
-    } else if (canvas.sight.sources.has(this.sourceId) && this.vision.los.origin.z !== z
-      || canvas.lighting.sources.has(this.sourceId) && this.light.los.origin.z !== z) {
+    } else if (canvas.sight.sources.has(this.sourceId) && (this.vision.los.origin.b !== bottom || this.vision.los.origin.t !== top)
+      || canvas.lighting.sources.has(this.sourceId) && (this.light.los.origin.b !== bottom || this.light.los.origin.t !== top)) {
       this.updateSource({ defer: true });
       canvas.perception.schedule({
         lighting: { refresh: true },
@@ -170,16 +197,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    const elevation = origin.z;
-    const isSingleNumber = isNaN(elevation);
-    if(!isSingleNumber){
-      return elevation != null && (elevation >= bottom && elevation <= top)
-      || elevation == null && (bottom === -Infinity && top === +Infinity);
-    }else{
-      return elevation != null && (elevation.bottom >= bottom && elevation.top <= top)
-      || elevation == null && (bottom === -Infinity && top === +Infinity);
-    }
-
+    return origin.b >= bottom && !(origin.t - top >= 0);
   }
 
   function testWallInclusion(wrapped, ...args){
@@ -192,32 +210,38 @@ export function registerWrappers() {
     const elevation = WallHeight.currentTokenElevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
-    if (!(elevation >= bottom && elevation < top)) return false;
+    if (!(elevation >= bottom && !(elevation - top >= 0))) return false;
     return wrapped(...args);
   }
 
-  function setSourceElevatio(wrapped, origin, config = {}, ...args) {
-    if (origin.z === undefined) {
+  function setSourceElevation(wrapped, origin, config = {}, ...args) {
+    let bottom = -Infinity;
+    let top = +Infinity;
+    if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
-      let elevation = 0;
       if (object instanceof Token) {
-        if(config.source?.sourceType === "vision"){
-          elevation = WallHeight.isLevels && _levels?.advancedLOS
+        bottom = object.data.elevation;
+        top = WallHeight.isLevels && _levels?.advancedLOS
           ? _levels.getTokenLOSheight(object)
-          : object.data.elevation;
-        }else{
-          elevation = object.data.elevation;
-        }
-
+          : bottom;
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
-          elevation = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
+          const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
+          bottom = bounds.bottom;
+          top = bounds.top;
         } else {
-          elevation = WallHeight.currentTokenElevation;
+          bottom = WallHeight.currentTokenElevation;
+          if (bottom == null) {
+            bottom = -Infinity;
+            top = +Infinity;
+          } else {
+            top = bottom;
+          }
         }
       }
-      origin.z = elevation;
     }
+    origin.b = origin.b ?? bottom;
+    origin.t = origin.t ?? top;
     return wrapped(origin, config, ...args);
   }
 
@@ -248,5 +272,5 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevatio, "WRAPPER");
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 }
