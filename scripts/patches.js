@@ -1,4 +1,4 @@
-import { getWallBounds,getSceneSettings,migrateData } from "./utils.js";
+import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds } from "./utils.js";
 
 const MODULE_ID = "wall-height";
 
@@ -148,9 +148,16 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    const elevation = origin.z != null ? origin.z / (canvas.scene.dimensions.size / canvas.scene.dimensions.distance) : null;
-    return elevation != null && (elevation + 1e-6 >= bottom && elevation - 1e-6 < top)
+    const elevation = origin.z;
+    const isSingleNumber = isNaN(elevation);
+    if(!isSingleNumber){
+      return elevation != null && (elevation >= bottom && elevation <= top)
       || elevation == null && (bottom === -Infinity && top === +Infinity);
+    }else{
+      return elevation != null && (elevation.bottom >= bottom && elevation.top <= top)
+      || elevation == null && (bottom === -Infinity && top === +Infinity);
+    }
+
   }
 
   function testWallInclusion(wrapped, ...args){
@@ -182,16 +189,12 @@ export function registerWrappers() {
 
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (object.document.getFlag(MODULE_ID, "advancedLighting")) {
-          elevation = WallHeight.getElevation(object.document);
+          elevation = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
         } else {
           elevation = WallHeight.currentTokenElevation;
         }
       }
-      if (elevation != null) {
-        origin.z = elevation * (canvas.scene.dimensions.size / canvas.scene.dimensions.distance);
-      } else {
-        origin.z = null;
-      }
+      origin.z = elevation;
     }
     return wrapped(origin, config, ...args);
   }

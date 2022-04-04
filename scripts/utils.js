@@ -7,6 +7,12 @@ export function getWallBounds(wall) {
     return { top, bottom }
 }
 
+export function getLevelsBounds(document){
+    const top = document.data.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = document.data.flags?.levels?.rangeBottom ?? -Infinity;
+    return { top, bottom }
+}
+
 export function getSceneSettings(scene) {
     let advancedVision = scene.getFlag(MODULE_SCOPE,"advancedVision") ?? true;
     return {advancedVision};

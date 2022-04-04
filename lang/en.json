@@ -6,6 +6,8 @@
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "ModuleLabel": "Wall Height",
         "elevation": "Elevation",
+        "levelsRangeTop": "Height (Top)",
+        "levelsRangeBottom": "Height (Bottom)",
         "distance": "(Grid Units)",
         "advancedLightingLabel": "Constrained by Elevation",
         "advancedLightingNotes": "Configure whether area of effect for this source is contrained by walls corresponding the elevation of this source instead of the elevation of the controlled token.",
