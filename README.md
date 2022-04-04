@@ -25,6 +25,10 @@ If you aquire content made with the old data structure here is how to manually m
 
 *Note: you can check the progress of the Token Attacher macros in the console (F12)
 
+## Breaking 4.0 Change
+
+The Top of walls is now included in vision blocking calculations (for example a 0-5 wall will block vision of a 5 elevation token) This means that if you had maps that relied on Exact numbers you might notice some walls are now blocking sight - if you need you can reduce by 1 the TOP of all the walls to have vision blocking work as before - this can be done though a macro present in the `Wall Height Macros` compendium called `Wall Height - Reduce Top By  One`
+
 ---
 
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
