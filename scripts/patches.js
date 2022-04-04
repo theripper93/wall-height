@@ -68,6 +68,22 @@ class WallHeightUtils{
     return document.data.flags.levels.rangeBottom;
   }
 
+  async setSourceElevationBounds(document, bottom, top) {
+    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
+    return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
+  }
+
+  getSourceElevationBounds(document) {
+    if (document instanceof TokenDocument) {
+      const bottom = document.data.elevation;
+      const top = WallHeight.isLevels && _levels?.advancedLOS && document.object
+      ? _levels.getTokenLOSheight(document.object)
+      : bottom;
+      return { bottom, top };
+    }
+    return getLevelsBounds(document);
+  }
+
   async migrateData(scene){
     return await migrateData(scene);
   }
