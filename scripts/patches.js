@@ -106,6 +106,23 @@ class WallHeightUtils{
     return getLevelsBounds(document);
   }
 
+  async removeOneToWalls(scene){
+    if(!scene) scene = canvas.scene;
+    const walls = Array.from(scene.walls);
+    const updates = [];
+    for(let wall of walls){
+      const oldTop = wall.data.flags?.["wall-height"]?.top;
+      if(oldTop != null && oldTop != undefined){
+        const newTop = oldTop - 1;
+        updates.push({_id: wall.id, "flags.wall-height.top": newTop});
+      }
+    }
+    if(updates.length <= 0) return false;
+    await scene.updateEmbeddedDocuments("Wall", updates);
+    ui.notifications.notify("Wall Height - Added +1 to " + updates.length + " walls in scene " + scene.name);
+    return true;
+  }
+
   async migrateData(scene){
     return await migrateData(scene);
   }
