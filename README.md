@@ -13,6 +13,8 @@ Due to misconfigured data stracture from the old implementation, i've rewritten 
 
 Macros are also included to run migrations if needed.
 
+**Due to the massive multi module update, if something does not work as expected after migration please restart your server and ctrl+f5 the page to ensure the browser cache is reloaded**
+
 ### How To Migrate content creator maps and prefabs
 
 If you aquire content made with the old data structure here is how to manually migrate scenes\compendiums and Token Attacher Prefabs:
