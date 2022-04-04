@@ -13,6 +13,16 @@ Due to misconfigured data stracture from the old implementation, i've rewritten 
 
 Macros are also included to run migrations if needed.
 
+### How To Migrate content creator maps and prefabs
+
+If you aquire content made with the old data structure here is how to manually migrate scenes\compendiums and Token Attacher Prefabs:
+
+1) Enable the modules that you wish to migrate ( EG. Baileywiki Maps Towns )
+2) Unlock ALL the actor compendiums containing Token Attacher Prefabs
+3) In the Wall Height Macro compendium `Wall Height Macros` run the `Wall Height - Migrate Everything` Macro and wait for it to finish
+4) In the Token Attacher Macro compendium `Example Macros` run `(TA) Migrate Actors for Wall Height` and `(TA) Migrate Compendiums for Wall Height` Macros waiting for each one to finish.
+5) Done, you are now migrated to the new data structure - You can repeat this process how many times you want.
+
 ---
 
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
@@ -25,7 +35,7 @@ The top and bottom heights of the walls are configurable in the wall configurati
 
 ## New Lighting/Sound Restriction
 
-Since 4.0+ Wall Height has the ability to calculate light and sound polygons indipendently of the selected token by enabling the "Constrained by Elevation" option
+Since 4.0+ Wall Height has the ability to calculate light and sound polygons indipendently of the selected token by enabling the "Constrained by Elevation" option. This option is Globally Enabled by default - you can turn it off in the module settings.
 
 ![image](https://user-images.githubusercontent.com/1346839/161382146-f764562a-cbc8-40d3-8af3-0f2a25a4b7c1.png)
 
