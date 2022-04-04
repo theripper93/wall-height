@@ -2,7 +2,8 @@
 
 ## [4.0.0]
 
-  - The module is now compatible with Foundry v9+
+  - The module now requires Foundry v9+
+  - [BREAKING] The Top elevation values of walls is now included in the sight blocking (eg - a 0\5 wall will block sight of a token at 5 elevation). This change is to make the numbers make more logical sense and to make it consistent with Levels
   - Fixed the wrong data structure with the correct one, migration scripts are in place to make the transition to the new version painless
   - Added Macros to the macro compendium to manually migrate
   - Fixed Door controls always beein visible, now they act accordingly to the wall height and token elevation
