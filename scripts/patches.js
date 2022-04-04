@@ -52,19 +52,19 @@ class WallHeightUtils{
     }
   }
 
-  async setTop(document, value) {
+  async setTopSourceElevation(document, value) {
     return await document.update({ "flags.levels.rangeTop": value });
   }
 
-  getTop(document) {
+  getTopSourceElevation(document) {
     return document.data.flags.levels.rangeTop;
   }
 
-  async setBottom(document, value) {
+  async setBottomSourceElevation(document, value) {
     return await document.update({ "flags.levels.rangeBottom": value });
   }
 
-  getBottom(document) {
+  getBottomSourceElevation(document) {
     return document.data.flags.levels.rangeBottom;
   }
 
