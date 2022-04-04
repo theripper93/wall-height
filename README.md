@@ -23,6 +23,8 @@ If you aquire content made with the old data structure here is how to manually m
 4) In the Token Attacher Macro compendium `Example Macros` run `(TA) Migrate Actors for Wall Height` and `(TA) Migrate Compendiums for Wall Height` Macros waiting for each one to finish.
 5) Done, you are now migrated to the new data structure - You can repeat this process how many times you want.
 
+*Note: you can check the progress of the Token Attacher macros in the console (F12)
+
 ---
 
 This Module adds the ability to give a vertical height to walls, this means that tokens can look and move under\over them depending on their elevation. To further enhance the threedimensionality of your experience the use of [Levels](https://github.com/theripper93/Levels) is suggested as well!
