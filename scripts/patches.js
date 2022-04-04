@@ -52,14 +52,20 @@ class WallHeightUtils{
     }
   }
 
-  async setElevation(document, value) {
-    if (document instanceof TokenDocument) return await document.update({ "elevation": value });
+  async setTop(document, value) {
+    return await document.update({ "flags.levels.rangeTop": value });
+  }
+
+  getTop(document) {
+    return document.data.flags.levels.rangeTop;
+  }
+
+  async setBottom(document, value) {
     return await document.update({ "flags.levels.rangeBottom": value });
   }
 
-  getElevation(document) {
-    if (document instanceof TokenDocument) return document.data.elevation;
-    return foundry.utils.getProperty(document.data, "flags.levels.rangeBottom") ?? -Infinity;
+  getBottom(document) {
+    return document.data.flags.levels.rangeBottom;
   }
 
   async migrateData(scene){
