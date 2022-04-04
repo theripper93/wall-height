@@ -225,6 +225,7 @@ Hooks.once("ready", () => {
   
     <h1>Wall Height Migration</h1>
     <p>Due to some incorrect data structures the Wall Height data needs to be migrated, this process will happen automatically for all your scenes and compendiums, if you need to run the migration again you can do so in the module settings. <strong>This new version of Wall Height requires Levels, Better Roofs, Token Attacher and 3D Canvas to be updated as well!</strong></p>
+    <p>For the full documetation on manual migration please check the <a href="https://github.com/theripper93/wall-height/blob/main/README.md">GitHub Repository</a></p>
 
     <p>Thanks to all the patreons supporting the development of my modules making continued updates possible!</p>
     <p>If you want to support the development of the module or get customized support in setting up your maps you can do so here : <a href="https://www.patreon.com/theripper93">Patreon</a> </p></large>
