@@ -1,4 +1,4 @@
-import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds } from "./utils.js";
+import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds,getAdvancedLighting } from "./utils.js";
 
 const MODULE_ID = "wall-height";
 
@@ -188,7 +188,7 @@ export function registerWrappers() {
         }
 
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
-        if (object.document.getFlag(MODULE_ID, "advancedLighting")) {
+        if (getAdvancedLighting(object.document)) {
           elevation = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
         } else {
           elevation = WallHeight.currentTokenElevation;

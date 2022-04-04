@@ -55,6 +55,15 @@ function registerSettings() {
         default: true
     });
 
+    game.settings.register(MODULE_ID, 'globalAdvancedLighting', {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.hint`),
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+    });
+
     game.settings.register(MODULE_ID, 'migrateOnStartup', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.migrateOnStartup.name`),
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.migrateOnStartup.hint`),
@@ -99,10 +108,13 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
     const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
-
+    const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
+    const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
+    const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
     const _injectHTML = `<div class="form-group">
     <label>${label}</label>
-    <input type="checkbox" name="flags.${MODULE_SCOPE}.advancedLighting" ${checked}>
+    <input type="checkbox" name="flags.${MODULE_SCOPE}.advancedLighting" ${checked} ${globalAdvancedLighting ? "disabled" : ""}>
+    ${hint}
     <p class="hint">${notes}</p>
     </div>`
     html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
@@ -139,10 +151,13 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
     const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
-    
+    const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
+    const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
+    const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
     const _injectHTML = `<div class="form-group">
     <label>${label}</label>
-    <input type="checkbox" name="flags.${MODULE_SCOPE}.advancedLighting" ${checked}>
+    <input type="checkbox" name="flags.${MODULE_SCOPE}.advancedLighting" ${checked} ${globalAdvancedLighting ? "disabled" : ""}>
+    ${hint}
     <p class="hint">${notes}</p>
     </div>`
     html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);

@@ -1,5 +1,9 @@
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY } from "./const.js";
 
+export function getAdvancedLighting(document){
+  return game.settings.get(MODULE_SCOPE, 'globalAdvancedLighting') || document.getFlag(MODULE_SCOPE, "advancedLighting")
+}
+
 export function getWallBounds(wall) {
     if(wall.document) wall = wall.document;
     const top = wall.getFlag(MODULE_SCOPE, TOP_KEY) ?? Infinity;
