@@ -56,11 +56,11 @@ libWrapper is now a required dependency.
 To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
 
 ```js
-WallHeight.setTopSourceElevation(document, value)
-WallHeight.getTopSourceElevation(document)
+WallHeight.setSourceElevationTop(document, value)
+WallHeight.getSourceElevationTop(document)
 
-WallHeight.setBottomSourceElevation(document, value)
-WallHeight.getBottomSourceElevation(document)
+WallHeight.setSourceElevationBottom(document, value)
+WallHeight.getSourceElevationBottom(document)
 ```
 
 Or, if you want to set\get both at the same time
