@@ -27,7 +27,7 @@ Since 4.0+ Wall Height has the ability to calculate light and sound polygons ind
 
 ![image](https://user-images.githubusercontent.com/1346839/161382146-f764562a-cbc8-40d3-8af3-0f2a25a4b7c1.png)
 
-For this option to work you need to assign an elevation value to the light\sound - if Levels is enabled the value used is the Height (bottom) of the entity.
+For this option to work you need to assign an elevation value (top\bottom) to the light\sound - these values are shared with Levels. For a source to be constrained by a wall it's whole range must be included in the wall (eg. 0/9 light will be constrained by 0/9 wall but not by a 0/8 wall)
 
 Finally, 3.5 adds a Macro Compendium, with a Set Elevation macro, which allows for quick updating of the elevation of multiple tokens, handy when the party is moving to different levels on a multilevel map.
 
@@ -40,8 +40,16 @@ libWrapper is now a required dependency.
 To avoid data duplication, Wall Height uses a data path belonging to the Levels module to store it's elevation - If Levels is not enabled you can use these helpers to read and set the elevation of a sound or light document
 
 ```js
-WallHeight.setElevation(document, value)
-WallHeight.getElevation(document)
+WallHeight.setTopSourceElevation(document, value)
+WallHeight.getTopSourceElevation(document)
+
+WallHeight.setBottomSourceElevation(document, value)
+WallHeight.getBottomSourceElevation(document)
+
+Or, if you want to set\get both at the same time
+
+WallHeight.setSourceElevationBounds(document, bottom, top)
+WallHeight.getSourceElevationBounds(document)
 ```
 
 ## Project Status
