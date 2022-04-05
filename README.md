@@ -75,6 +75,18 @@ Your map has a table, walled with 0\5 Walls. A token at elevation 0 but with a T
 
 ---
 
+## Sight Blocks Movement
+
+Through this setting you can decide whether the movement of the tokens is restricted by the walls that are currently blocking its movement or by it's elevation
+
+Example:
+
+Token at 0 elevation with a token height of 5 and a 0/3 Wall:
+ - Sight Blocks Movement enabled: The movement of the token will not be blocked because with an height of 5 the token can see through the wall
+ - Sight Blocks Movement disabled: The movement of the token will be blocked because it's elevation (or it's feet if you will) is at 0 and the wall blocks movement at 0 elevation
+
+---
+
 Finally, 3.5 adds a Macro Compendium, with a Set Elevation macro, which allows for quick updating of the elevation of multiple tokens, handy when the party is moving to different levels on a multilevel map.
 
 With 3.5.2, the Set Elevation macro has been modified to support Multilevel Tokens (https://foundryvtt.com/packages/multilevel-tokens/) (can accept one or two parameters for entry and exit elevations).
