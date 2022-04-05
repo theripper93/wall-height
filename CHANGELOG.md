@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.0]
+
+  - Added `Sight Blocks Movement` option
+
 ## [4.1.2]
 
   - Fixed tokens walking through walls
