@@ -26,6 +26,10 @@ Hooks.once("init",()=>{
 Hooks.once("ready", ()=>{
     if(!game.user.isGM) return;
     if(game.settings.get(MODULE_ID, 'migrateOnStartup')) WallHeight.migrateAll();
+    if(game.settings.get(MODULE_ID, 'migrateTokenHeight')) {
+        WallHeight.migrateTokenHeight();
+        game.settings.set(MODULE_ID, 'migrateTokenHeight',false)
+    }
 })
 
 Hooks.on("hoverWall",(wall, hovered)=>{
@@ -66,30 +70,30 @@ function registerSettings() {
         default: true
     });
 
-    
-  game.settings.register(MODULE_ID, "defaultLosHeight", {
-    name: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.name`),
-    hint: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.hint`),
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 6,
-    onChange: () => {
-        WallHeight.cacheSettings();
-    },
-  });
+    game.settings.register(MODULE_ID, "autoLOSHeight", {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.hint`),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
+      });
 
-  game.settings.register(MODULE_ID, "autoLOSHeight", {
-    name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
-    hint: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.hint`),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: () => {
-        WallHeight.cacheSettings();
-    },
-  });
+    
+    game.settings.register(MODULE_ID, "defaultLosHeight", {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.hint`),
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 6,
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
+    });
 
     game.settings.register(MODULE_ID, 'globalAdvancedLighting', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.name`),
@@ -105,6 +109,13 @@ function registerSettings() {
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.migrateOnStartup.hint`),
         scope: 'world',
         config: true,
+        type: Boolean,
+        default: true
+    });
+    
+    game.settings.register(MODULE_ID, 'migrateTokenHeight', {
+        scope: 'world',
+        config: false,
         type: Boolean,
         default: true
     });
@@ -225,7 +236,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
     const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
     let newHtml = `
   <div class="form-group slim">
-              <label>${label}<span class="units">${distance}</span></label>
+              <label>${label}<span class="units"> ${distance}</span></label>
               <div class="form-fields">
               <input type="number" step="any" name="flags.${MODULE_SCOPE}.tokenHeight" placeholder="units" value="${tokenHeight}">
               </div>         

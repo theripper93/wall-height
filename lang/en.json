@@ -19,6 +19,10 @@
         "settings.enableTooltip.name": "Enable Tooltip",
         "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh.",
         "settings.migrateOnStartup.name": "Migrate Wall-Height Data On Startup",
-        "settings.migrateOnStartup.hint": "Migrates wall-height data from the old wall-height data structure to the new one. This is only necessary once but you can enable this settings and refresh the page if you need to run it again."
+        "settings.migrateOnStartup.hint": "Migrates wall-height data from the old wall-height data structure to the new one. This is only necessary once but you can enable this settings and refresh the page if you need to run it again.",
+        "settings.autoLOSHeight.name": "Automatic Token Height",
+        "settings.autoLOSHeight.hint": "Calculate token height automatically via token size and scale.\nToken height will be calculated for any token without a custom height value or with a custom height set to 0. Default token height will be ignored.",
+        "settings.defaultLosHeight.name": "Default Token Height",
+        "settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6."
     }
 }

@@ -1,4 +1,4 @@
-import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds,getAdvancedLighting } from "./utils.js";
+import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds,getAdvancedLighting,migrateTokenHeight } from "./utils.js";
 
 const MODULE_ID = "wall-height";
 
@@ -125,6 +125,10 @@ class WallHeightUtils{
     return true;
   }
 
+  async migrateTokenHeight(){
+    return await migrateTokenHeight();
+  }
+
   async migrateData(scene){
     return await migrateData(scene);
   }
@@ -227,7 +231,7 @@ export function registerWrappers() {
     const elevation = WallHeight.currentTokenElevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
-    if (!(elevation >= bottom && !(elevation - top >= 0))) return false;
+    if (!(elevation >= bottom && elevation <= top)) return false;
     return wrapped(...args);
   }
 

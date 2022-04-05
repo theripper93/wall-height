@@ -104,3 +104,48 @@ export async function migrateData(scene){
   console.log("Wall Height - Migrated " + updates.length + " walls to new Wall Height data structure in scene " + scene.name);
   return true;
 }
+
+export async function migrateTokenHeight(){
+  ui.notifications.notify("Wall Height - Migrating Token Height from Levels...");
+  const scenes = Array.from(game.scenes);
+  for(let scene of scenes){
+    await migrateTokenHeightInScene(scene);
+  }
+  const updates = [];
+  const actors = Array.from(game.actors);
+  for(const actor of actors){
+    const oldTokenHeight = actor.data.token.flags?.levels?.tokenHeight
+    if (oldTokenHeight) {
+      const update = {
+        _id: actor.id,
+        "token.flags.wall-height.tokenHeight": oldTokenHeight,
+      };
+      updates.push(update);
+    }
+  }
+  await Actor.updateDocuments(updates)
+  ui.notifications.notify("Wall Height - Migrated Token Height from Levels. You can migrate again with the provided macro if needeed.");
+  ui.notifications.warn("Global settings for Token Height need to be manually set in Wall Height module settings!", {permanent: true});
+}
+
+async function migrateTokenHeightInScene(scene){
+  const tokens = Array.from(scene.tokens);
+  const updates = [];
+  for (const token of tokens) {
+      const oldTokenHeight = token.data.flags?.levels?.tokenHeight
+      if (oldTokenHeight) {
+          const update = {
+            _id: token.id,
+            flags: {
+              "wall-height": {
+                tokenHeight: oldTokenHeight,
+              },
+            },
+          };
+    updates.push(update);
+      }
+  }
+  if(updates.length <= 0) return false;
+  await scene.updateEmbeddedDocuments("Token", updates);
+  return true;
+}
