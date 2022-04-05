@@ -1,10 +1,15 @@
 import { registerWrappers } from "./patches.js";
-import { getWallBounds,getSceneSettings,migrateData } from "./utils.js";
+import { getWallBounds,getSceneSettings,migrateData,getTokenLOSheight } from "./utils.js";
 import { WallHeightToolTip } from './tooltip.js';
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY, ENABLE_ADVANCED_VISION_KEY, ENABLE_ADVANCED_MOVEMENT_KEY } from "./const.js";
 
 const MODULE_ID = 'wall-height';
 
+Object.defineProperty(Token.prototype, "losHeight", {
+    get: function myProperty() {
+      return getTokenLOSheight(this);
+    },
+});
 
 Hooks.once("init",()=>{
     registerWrappers();
@@ -15,6 +20,7 @@ Hooks.once("init",()=>{
         }
     });
     registerSettings();
+    WallHeight.cacheSettings();
 });
 
 Hooks.once("ready", ()=>{
@@ -23,6 +29,7 @@ Hooks.once("ready", ()=>{
 })
 
 Hooks.on("hoverWall",(wall, hovered)=>{
+    if (!canvas.hud?.wallHeight) return;
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(advancedVision!=null && !advancedVision)
         return;
@@ -58,6 +65,31 @@ function registerSettings() {
         type: Boolean,
         default: true
     });
+
+    
+  game.settings.register(MODULE_ID, "defaultLosHeight", {
+    name: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.name`),
+    hint: game.i18n.localize(`${MODULE_SCOPE}.settings.defaultLosHeight.hint`),
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 6,
+    onChange: () => {
+        WallHeight.cacheSettings();
+    },
+  });
+
+  game.settings.register(MODULE_ID, "autoLOSHeight", {
+    name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
+    hint: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.hint`),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: () => {
+        WallHeight.cacheSettings();
+    },
+  });
 
     game.settings.register(MODULE_ID, 'globalAdvancedLighting', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.name`),
@@ -186,6 +218,22 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     html.find(`input[name="radius"]`).closest(".form-group").after(elevationHtml);
     app.setPosition({ height: "auto" });
 })
+
+Hooks.on("renderTokenConfig", (app, html, data) => {
+    const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
+    const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
+    const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    let newHtml = `
+  <div class="form-group slim">
+              <label>${label}<span class="units">${distance}</span></label>
+              <div class="form-fields">
+              <input type="number" step="any" name="flags.${MODULE_SCOPE}.tokenHeight" placeholder="units" value="${tokenHeight}">
+              </div>         
+            </div>
+  `;
+    html.find('input[name="elevation"]').closest(".form-group").after(newHtml);
+    app.setPosition({ height: "auto" });
+  });
 
 Hooks.on("renderSceneConfig", (app, html, data) => {
     const {advancedVision} = getSceneSettings(app.object);

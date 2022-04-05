@@ -1,5 +1,21 @@
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY } from "./const.js";
 
+export function getTokenLOSheight(token) {
+  let losDiff;
+  let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
+  if (WallHeight._autoLosHeight) {
+    losDiff =
+      token.data.flags[MODULE_SCOPE]?.tokenHeight ||
+      canvas.scene.dimensions.distance *
+        Math.max(token.data.width, token.data.height) *
+        token.data.scale;
+  } else {
+    losDiff = token.data.flags[MODULE_SCOPE]?.tokenHeight || WallHeight._defaultTokenHeight;
+  }
+
+  return token.data.elevation + losDiff / divideBy;
+}
+
 export function getAdvancedLighting(document){
   return game.settings.get(MODULE_SCOPE, 'globalAdvancedLighting') || document.getFlag(MODULE_SCOPE, "advancedLighting")
 }

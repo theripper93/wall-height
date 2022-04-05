@@ -7,6 +7,13 @@ class WallHeightUtils{
     this._advancedVision = null;
     this._currentTokenElevation = null;
     this.isLevels = game.modules.get("levels")?.active;
+    this._autoLosHeight = false;
+    this._defaultTokenHeight = 6;
+  }
+
+  cacheSettings(){
+    this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
+    this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
   }
 
   set currentTokenElevation(elevation) {
@@ -45,10 +52,7 @@ class WallHeightUtils{
     if (!token && game.user.isGM) {
       this.currentTokenElevation = null;
     } else if (token) {
-      this.currentTokenElevation =
-        WallHeight.isLevels && _levels?.advancedLOS
-          ? _levels.getTokenLOSheight(token)
-          : token.data.elevation;
+      this.currentTokenElevation = token.losHeight
     }
   }
 
@@ -58,9 +62,7 @@ class WallHeightUtils{
   }
 
   getSourceElevationTop(document) {
-    if (document instanceof TokenDocument) return WallHeight.isLevels && _levels?.advancedLOS && document.object
-      ? _levels.getTokenLOSheight(document.object)
-      : document.data.elevation;
+    if (document instanceof TokenDocument) return document.object.losHeight
     return document.data.flags?.levels?.rangeTop ?? +Infinity;
   }
 
@@ -82,8 +84,8 @@ class WallHeightUtils{
   getSourceElevationBounds(document) {
     if (document instanceof TokenDocument) {
       const bottom = document.data.elevation;
-      const top = WallHeight.isLevels && _levels?.advancedLOS && document.object
-        ? _levels.getTokenLOSheight(document.object)
+      const top = document.object
+        ? document.object.losHeight
         : bottom;
       return { bottom, top };
     }
@@ -98,8 +100,8 @@ class WallHeightUtils{
   getSourceElevationBounds(document) {
     if (document instanceof TokenDocument) {
       const bottom = document.data.elevation;
-      const top = WallHeight.isLevels && _levels?.advancedLOS && document.object
-      ? _levels.getTokenLOSheight(document.object)
+      const top = document.object
+      ? document.object.losHeight
       : bottom;
       return { bottom, top };
     }
@@ -186,9 +188,7 @@ export function registerWrappers() {
 
     const { advancedVision } = getSceneSettings(this.scene);
     const bottom = this.data.elevation;
-    const top = WallHeight.isLevels && _levels?.advancedLOS
-      ? _levels.getTokenLOSheight(this)
-      : bottom;
+    const top = this.losHeight;
     if (!advancedVision) {
       if (canvas.sight.sources.has(this.sourceId)) {
         this.vision.los.origin.b = bottom;
@@ -238,9 +238,7 @@ export function registerWrappers() {
       const object = config.source?.object;
       if (object instanceof Token) {
         bottom = object.data.elevation;
-        top = WallHeight.isLevels && _levels?.advancedLOS
-          ? _levels.getTokenLOSheight(object)
-          : bottom;
+        top = object.losHeight;
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
           const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
