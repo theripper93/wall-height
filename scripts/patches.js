@@ -220,7 +220,13 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    return origin.b >= bottom && origin.t <= top;
+    let b = origin.b
+    let t = origin.t
+    if(type === "move"){
+      b = WallHeight.currentTokenElevation
+      t = WallHeight.currentTokenElevation
+    }
+    return b >= bottom && t <= top;
   }
 
   function testWallInclusion(wrapped, ...args){
