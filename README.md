@@ -102,7 +102,7 @@ WallHeight.getSourceElevationBounds(document)
 
 ## Project Status
 
-As I'm now mantaining the module, Wall Height will keep preserving it's orginal porpouse of setting an elevation to walls, to keep this module as conflict free as possible no other functionalies for three dimensional navigation will be added since those will be kept for implementation in Levels while this module will serve as a light weight variant for veerticality for users that don't need the full suit of features.
+As I'm now mantaining the module, i will keep it updated with new foundry versions and new features will most likely stop with the 4.0\4.1 set of updates.
 
 ## Compatibility
 
