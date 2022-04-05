@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [4.1.0]
+
+  - Fixed Set Elevation macro
+  - Fixed tooltip erroring if disabled
+  - Reintroduced token height with new implementation - data will be migrated from levels
+
 ## [4.0.0]
 
   - The module now requires Foundry v9+

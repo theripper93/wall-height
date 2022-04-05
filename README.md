@@ -51,6 +51,30 @@ For this option to work you need to assign an elevation value (top\bottom) to th
 
 ---
 
+## Token Height
+
+Since 4.1+ Wall Height lets you (again) set a height to your tokens, you have the following options:
+
+**Module Settings**
+ - Automatic Token Height: If a token does not have a Token Height set, or it's set to 0 the automatic calculation will be used. The token height is determined by your grid. For example a grid where one square is 5ft will have a 1x1 token be 5ft tall, a 2x2 token 10ft tall etc...
+ - Default Token Height: **This option is ignored if Automatic Token Height is enabled** - If a token does not have a Token Height set, or it's set to 0 this value will be used instead
+
+**Token Setting**
+This setting will ALWAYS be used instead of the global settings unless it's set to 0
+![image](https://user-images.githubusercontent.com/1346839/161755424-7221ddc6-062b-4186-9882-ffe4732e935a.png)
+
+**Migration**: The migration from Levels will happen automatically, if you wish to re-run it you can do so with a macro in the wall height macro compendium.
+
+**How does it work?**
+
+The height of the token will be used to calculate it's vision instead of it's Elevation
+
+Example:
+
+Your map has a table, walled with 0\5 Walls. A token at elevation 0 but with a Token Height of 6 will be able to ignore those walls and see\walk through them while a Token with a Token Height of 5 will have it's sight and movement restricted by those walls.
+
+---
+
 Finally, 3.5 adds a Macro Compendium, with a Set Elevation macro, which allows for quick updating of the elevation of multiple tokens, handy when the party is moving to different levels on a multilevel map.
 
 With 3.5.2, the Set Elevation macro has been modified to support Multilevel Tokens (https://foundryvtt.com/packages/multilevel-tokens/) (can accept one or two parameters for entry and exit elevations).
