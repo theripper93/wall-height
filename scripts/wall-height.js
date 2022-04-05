@@ -242,7 +242,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
               </div>         
             </div>
   `;
-    html.find('input[name="elevation"]').closest(".form-group").after(newHtml);
+    html.find('input[name="lockRotation"]').closest(".form-group").before(newHtml);
     app.setPosition({ height: "auto" });
   });
 
