@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.1.2]
+
+  - Fixed tokens walking through walls
+
 ## [4.1.0]
 
   - Fixed Set Elevation macro
