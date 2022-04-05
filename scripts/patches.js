@@ -14,6 +14,11 @@ class WallHeightUtils{
   cacheSettings(){
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
+    this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
+  }
+
+  get tokenElevation(){
+    return this._token?.data?.elevation ?? this.currentTokenElevation
   }
 
   set currentTokenElevation(elevation) {
@@ -220,7 +225,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    if(type === "move") return WallHeight.currentTokenElevation >= bottom && WallHeight.currentTokenElevation <= top;
+    if(type === "move") return WallHeight._blockSightMovement ? WallHeight.currentTokenElevation >= bottom && WallHeight.currentTokenElevation <= top : WallHeight.tokenElevation >= bottom && WallHeight.tokenElevation <= top;
     return origin.b >= bottom && origin.t <= top;
   }
 

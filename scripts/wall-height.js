@@ -70,6 +70,18 @@ function registerSettings() {
         default: true
     });
 
+    game.settings.register(MODULE_ID, "blockSightMovement", {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.blockSightMovement.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.blockSightMovement.hint`),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
+      });
+
     game.settings.register(MODULE_ID, "autoLOSHeight", {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.hint`),
