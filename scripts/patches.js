@@ -51,8 +51,10 @@ class WallHeightUtils{
     const token = canvas.tokens.controlled[0];
     if (!token && game.user.isGM) {
       this.currentTokenElevation = null;
+      this._token = null;
     } else if (token) {
       this.currentTokenElevation = token.losHeight
+      this._token = token;
     }
   }
 
@@ -228,10 +230,10 @@ export function registerWrappers() {
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
-    const elevation = WallHeight.currentTokenElevation;
+    const elevation = WallHeight.isLevels && _levels?.UI?.rangeEnabled && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.data?.elevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
-    if (!(elevation >= bottom && elevation <= top)) return false;
+    if (elevation < bottom || elevation > top) return false;
     return wrapped(...args);
   }
 
@@ -279,6 +281,7 @@ export function registerWrappers() {
   Hooks.on("canvasInit", () => {
     WallHeight._advancedVision = null;
     WallHeight._currentTokenElevation = null;
+    WallHeight._token = null;
   });
 
   Hooks.on("canvasReady", () => {
