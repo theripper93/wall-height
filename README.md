@@ -56,7 +56,7 @@ For this option to work you need to assign an elevation value (top\bottom) to th
 Since 4.1+ Wall Height lets you (again) set a height to your tokens, you have the following options:
 
 **Module Settings**
- - Automatic Token Height: If a token does not have a Token Height set, or it's set to 0 the automatic calculation will be used. The token height is determined by your grid. For example a grid where one square is 5ft will have a 1x1 token be 5ft tall, a 2x2 token 10ft tall etc...
+ - Automatic Token Height: If a token does not have a Token Height set, or it's set to 0 the automatic calculation will be used. The token height is determined by your grid. For example a grid where one square is 5ft will have a 1x1 token be 5ft tall, a 2x2 token 10ft tall etc... Note that this value is then multiplied by the token image scale, For example a 1x1 token with 2 scale on a 5ft grid will be 10ft tall.
  - Default Token Height: **This option is ignored if Automatic Token Height is enabled** - If a token does not have a Token Height set, or it's set to 0 this value will be used instead
 
 **Token Setting**
