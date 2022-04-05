@@ -221,12 +221,30 @@ export function registerWrappers() {
     }
   }
 
+  function tokenCheckCollision(destination) {
+    // Create a Ray for the attempted move
+    let origin = this.getCenter(...Object.values(this._validPosition));
+    let ray = new Ray({x: origin.x, y: origin.y, b: this.data.elevation, t: WallHeight._blockSightMovement ? this.losHeight : this.data.elevation }, {x: destination.x, y: destination.y});
+
+    // Shift the origin point by the prior velocity
+    ray.A.x -= this._velocity.sx;
+    ray.A.y -= this._velocity.sy;
+
+    // Shift the destination point by the requested velocity
+    ray.B.x -= Math.sign(ray.dx);
+    ray.B.y -= Math.sign(ray.dy);
+
+    // Check for a wall collision
+    return canvas.walls.checkCollision(ray);
+  }
+
   function testWallHeight(wall, origin, type) {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    if(type === "move") return WallHeight._blockSightMovement ? WallHeight.currentTokenElevation >= bottom && WallHeight.currentTokenElevation <= top : WallHeight.tokenElevation >= bottom && WallHeight.tokenElevation <= top;
-    return origin.b >= bottom && origin.t <= top;
+    const b = origin.b ?? -Infinity;
+    const t = origin.t ?? +Infinity;
+    return b >= bottom && t <= top;
   }
 
   function testWallInclusion(wrapped, ...args){
@@ -297,6 +315,8 @@ export function registerWrappers() {
   libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
   libWrapper.register(MODULE_ID, "Token.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
+
+  libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 

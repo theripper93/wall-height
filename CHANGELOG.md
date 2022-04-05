@@ -2,7 +2,7 @@
 
 ## [4.2.0]
 
-  - Added `Sight Blocks Movement` option
+  - Added `Vaulting` option
 
 ## [4.1.2]
 
