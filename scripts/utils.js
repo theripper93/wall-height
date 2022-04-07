@@ -22,8 +22,8 @@ export function getAdvancedLighting(document){
 
 export function getWallBounds(wall) {
     if(wall.document) wall = wall.document;
-    const top = wall.getFlag(MODULE_SCOPE, TOP_KEY) ?? Infinity;
-    const bottom = wall.getFlag(MODULE_SCOPE, BOTTOM_KEY) ?? -Infinity;
+    const top = wall.data.flags[MODULE_SCOPE]?.[TOP_KEY] ?? Infinity;
+    const bottom = wall.data.flags[MODULE_SCOPE]?.[BOTTOM_KEY] ?? -Infinity;
     return { top, bottom }
 }
 
