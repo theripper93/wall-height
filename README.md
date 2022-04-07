@@ -82,8 +82,8 @@ Through this setting you can decide whether the movement of the tokens is restri
 Example:
 
 Token at 0 elevation with a token height of 5 and a 0/3 Wall:
- - Vaulting enabled: The movement of the token is not be blocked because with an height of 5 the token can see over the wall
- - Vaulting disabled: The movement of the token is blocked because its elevation (or its feet if you will) is at 0 and the wall blocks movement at 0 elevation
+ - Vaulting enabled: The movement of the token is not blocked because with a height of 5 the token can see over the wall.
+ - Vaulting disabled: The movement of the token is blocked because its elevation (or its feet if you will) is at 0 and the wall blocks movement at 0 elevation.
 
 ---
 
