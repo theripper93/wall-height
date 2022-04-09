@@ -242,6 +242,10 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
+    if(type === "move"){
+      origin.b = WallHeight._token?.data?.elevation
+      origin.t = WallHeight._blockSightMovement ? WallHeight.currentTokenElevation : WallHeight._token?.data?.elevation
+    }
     const b = origin.b ?? -Infinity;
     const t = origin.t ?? +Infinity;
     return b >= bottom && t <= top;
@@ -316,7 +320,7 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "Token.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
+  //libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
