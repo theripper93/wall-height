@@ -248,14 +248,24 @@ export function registerWrappers() {
     return canvas.walls.checkCollision(ray);
   }
 
+  function rulerGetRaysFromWaypoints(wrapped, ...args) {
+    const rays = wrapped(...args);
+    const token = this._getMovementToken();
+    if (token) {
+      const bottom = token.data.elevation;
+      const top = WallHeight._blockSightMovement ? token.losHeight : token.data.elevation;
+      for (const ray of rays) {
+        ray.A.b = bottom;
+        ray.A.t = top;
+      }
+    }
+    return rays;
+  }
+
   function testWallHeight(wall, origin, type) {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    if(type === "move"){
-      origin.b = WallHeight._token?.data?.elevation
-      origin.t = WallHeight._blockSightMovement ? WallHeight.currentTokenElevation : WallHeight._token?.data?.elevation
-    }
     const b = origin.b ?? -Infinity;
     const t = origin.t ?? +Infinity;
     return b >= bottom && t <= top;
@@ -330,7 +340,9 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "Token.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  //libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
+  libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
+
+  libWrapper.register(MODULE_ID, "Ruler.prototype._getRaysFromWaypoints", rulerGetRaysFromWaypoints, "WRAPPER");
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
 
