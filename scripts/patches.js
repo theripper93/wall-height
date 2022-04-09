@@ -186,6 +186,16 @@ class WallHeightUtils{
       await game.settings.set(MODULE_ID, 'migrateOnStartup', false);
   }
 
+  async setWallBounds(bottom, top, walls){
+    if(!walls) walls = canvas.walls.controlled.length ? canvas.walls.controlled : canvas.walls.placeables;
+    walls instanceof Array || (walls = [walls]);
+    const updates = [];
+    for(let wall of walls){
+      updates.push({_id: wall.id, "flags.wall-height.top": top, "flags.wall-height.bottom": bottom});
+    }
+    return await canvas.scene.updateEmbeddedDocuments("Wall", updates);
+  }
+
   getWallBounds(wall){
     return getWallBounds(wall);
   }
