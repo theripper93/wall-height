@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.5]
+
+  - Moved wrapper code to the public WallHeight.addBoundsToRays function
+
 ## [4.2.0]
 
   - Added `Vaulting` option
