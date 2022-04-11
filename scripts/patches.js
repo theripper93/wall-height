@@ -199,6 +199,19 @@ class WallHeightUtils{
   getWallBounds(wall){
     return getWallBounds(wall);
   }
+
+  addBoundsToRays(rays, token) {
+    if (token) {
+      const bottom = token.data.elevation;
+      const top = WallHeight._blockSightMovement ? token.losHeight : token.data.elevation;
+      for (const ray of rays) {
+        ray.A.b = bottom;
+        ray.A.t = top;
+      }
+    }
+    return rays;
+  }
+
 }
 
 export function registerWrappers() {
@@ -251,14 +264,7 @@ export function registerWrappers() {
   function rulerGetRaysFromWaypoints(wrapped, ...args) {
     const rays = wrapped(...args);
     const token = this._getMovementToken();
-    if (token) {
-      const bottom = token.data.elevation;
-      const top = WallHeight._blockSightMovement ? token.losHeight : token.data.elevation;
-      for (const ray of rays) {
-        ray.A.b = bottom;
-        ray.A.t = top;
-      }
-    }
+    WallHeight.addBoundsToRays(rays, token);
     return rays;
   }
 
