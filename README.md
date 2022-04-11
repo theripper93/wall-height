@@ -114,6 +114,13 @@ WallHeight.setSourceElevationBounds(document, bottom, top)
 WallHeight.getSourceElevationBounds(document)
 ```
 
+## API
+
+Given an Array of Rays and a token, adds the top\bottom values to the rays for wallheight to use
+```js
+WallHeight.addBoundsToRays(rays, token)
+```
+
 ## Project Status
 
 As I'm now mantaining the module, i will keep it updated with new foundry versions and new features will most likely stop with the 4.0\4.1 set of updates.
