@@ -17,6 +17,8 @@ Macros are also included to run migrations if needed.
 
 ### How To Migrate content creator maps and prefabs
 
+if you prefer you can check the video guide by zephyr https://youtu.be/0a3v0P9PQng
+
 If you aquire content made with the old data structure here is how to manually migrate scenes\compendiums and Token Attacher Prefabs:
 
 1) Enable the modules that you wish to migrate ( EG. Baileywiki Maps Towns )
