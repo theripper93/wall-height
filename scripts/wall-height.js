@@ -165,7 +165,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
@@ -184,13 +184,13 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const top = app.object.data.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
-        <label>${rangeTop} <span class="units">${distance}</span></label>
+        <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeTop" type="text" data-dtype="Number" value="${top}">
         </div>
     </div>
     <div class="form-group">
-        <label>${rangeBottom} <span class="units">${distance}</span></label>
+        <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
         </div>
@@ -209,7 +209,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
     const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
@@ -226,13 +226,13 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const top = app.object.data.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
-        <label>${rangeTop} <span class="units">${distance}</span></label>
+        <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeTop" type="text" data-dtype="Number" value="${top}">
         </div>
     </div>
     <div class="form-group">
-        <label>${rangeBottom} <span class="units">${distance}</span></label>
+        <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
         </div>
@@ -245,10 +245,10 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 Hooks.on("renderTokenConfig", (app, html, data) => {
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
-    const distance = game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     let newHtml = `
   <div class="form-group slim">
-              <label>${label}<span class="units"> ${distance}</span></label>
+              <label>${label} <span class="units">(${distance})</span></label>
               <div class="form-fields">
               <input type="number" step="any" name="flags.${MODULE_SCOPE}.tokenHeight" placeholder="units" value="${tokenHeight}">
               </div>         
