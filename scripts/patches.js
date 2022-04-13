@@ -297,7 +297,7 @@ export function registerWrappers() {
     if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
       if (object instanceof Token) {
-        bottom = config.type === "sight" ? object.losHeight : object.data.elevation;
+        bottom = config.type !== "move" ? object.losHeight : object.data.elevation;
         top = object.losHeight;
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
