@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.7]
+
+  - Changed token sight behaviour to use only losHeight instead of a range
+
 ## [4.2.5]
 
   - Moved wrapper code to the public WallHeight.addBoundsToRays function
