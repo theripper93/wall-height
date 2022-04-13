@@ -275,7 +275,7 @@ export function registerWrappers() {
     const b = origin.b ?? -Infinity;
     const t = origin.t ?? +Infinity;
     return b >= bottom && t <= top;
-  }
+  } 
 
   function testWallInclusion(wrapped, ...args){
     return wrapped(...args) && testWallHeight(args[0], args[1], args[2]);
@@ -297,7 +297,7 @@ export function registerWrappers() {
     if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
       if (object instanceof Token) {
-        bottom = object.data.elevation;
+        bottom = config.type === "sight" ? object.losHeight : object.data.elevation;
         top = object.losHeight;
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
