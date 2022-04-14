@@ -6,7 +6,8 @@ class WallHeightUtils{
   constructor(){
     this._advancedVision = null;
     this._currentTokenElevation = null;
-    this.isLevels = game.modules.get("levels")?.active;
+    this.isLevels = game.modules.get("levels")?.active ?? false;
+    this._isLevelsAutoCover = game.modules.get("levelsautocover")?.active ?? false;
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
   }
