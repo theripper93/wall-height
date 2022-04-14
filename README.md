@@ -129,6 +129,8 @@ As I'm now mantaining the module, i will keep it updated with new foundry versio
 
 This module is likely incompatible with modules which modify token vision.
 
+**Token Lean**: Wall Height is currently incompatible with Token Lean
+
 ## License
 
 Licensed under the GPLv3 License (see [LICENSE](LICENSE)).
