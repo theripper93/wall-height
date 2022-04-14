@@ -1,7 +1,7 @@
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY } from "./const.js";
 
 export function getTokenLOSheight(token) {
-  if (isTokenProne(token)) return token.data.elevation;
+  if (WallHeight._prone && isTokenProne(token)) return token.data.elevation;
   let losDiff;
   let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
   if (WallHeight._autoLosHeight) {

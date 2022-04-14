@@ -22,6 +22,8 @@
         "settings.migrateOnStartup.hint": "Migrates wall-height data from the old wall-height data structure to the new one. This is only necessary once but you can enable this settings and refresh the page if you need to run it again.",
         "settings.blockSightMovement.name": "Vaulting",
         "settings.blockSightMovement.hint": "Allows tokens to move over walls if the elevation difference between the feet of the token and the top of the wall is not greater than the height of the token.",
+        "settings.prone.name": "Prone",
+        "settings.prone.hint": "If enabled, the token height is 0 while the token has the prone status.",
         "settings.autoLOSHeight.name": "Automatic Token Height",
         "settings.autoLOSHeight.hint": "Calculate token height automatically via token size and scale.\nToken height will be calculated for any token without a custom height value or with a custom height set to 0. Default token height will be ignored.",
         "settings.defaultLosHeight.name": "Default Token Height",

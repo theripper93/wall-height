@@ -82,6 +82,18 @@ function registerSettings() {
         },
       });
 
+    game.settings.register(MODULE_ID, "prone", {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.prone.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.prone.hint`),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
+    });
+
     game.settings.register(MODULE_ID, "autoLOSHeight", {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.hint`),

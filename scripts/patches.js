@@ -15,6 +15,8 @@ class WallHeightUtils{
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
+    this._prone = game.settings.get(MODULE_ID, "prone");
+    this.schedulePerceptionUpdate();
   }
 
   get tokenElevation(){
@@ -44,6 +46,7 @@ class WallHeightUtils{
   }
 
   schedulePerceptionUpdate(){
+    if (!canvas.ready) return;
     canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
       sight: { initialize: true, refresh: true, forceUpdateFog: true },
@@ -325,6 +328,7 @@ export function registerWrappers() {
 
   if (game.system.id !== "pf2e") {
     function onActiveEffect(effect) {
+      if (!WallHeight._prone) return;
       const actor = effect.parent;
       if (actor instanceof Actor) {
         for (const token of actor.getActiveTokens()) {
