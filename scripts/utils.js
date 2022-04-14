@@ -34,7 +34,7 @@ export function getLevelsBounds(document){
 }
 
 export function getSceneSettings(scene) {
-    let advancedVision = scene.getFlag(MODULE_SCOPE,"advancedVision") ?? true;
+    let advancedVision = scene.data.flags[MODULE_SCOPE]?.advancedVision ?? true;
     return {advancedVision};
 }
 

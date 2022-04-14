@@ -268,7 +268,8 @@ export function registerWrappers() {
     return rays;
   }
 
-  function testWallHeight(wall, origin, type) {
+  function testWallInclusion(wrapped, wall, origin, type) {
+    if (!wrapped(wall, origin, type)) return false;
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
@@ -276,10 +277,6 @@ export function registerWrappers() {
     const t = origin.t ?? +Infinity;
     return b >= bottom && t <= top;
   } 
-
-  function testWallInclusion(wrapped, ...args){
-    return wrapped(...args) && testWallHeight(args[0], args[1], args[2]);
-  }
 
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
@@ -350,7 +347,7 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "Ruler.prototype._getRaysFromWaypoints", rulerGetRaysFromWaypoints, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER");
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 }
