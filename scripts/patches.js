@@ -220,21 +220,25 @@ export function registerWrappers() {
   function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
 
-    const { advancedVision } = getSceneSettings(this.scene);
-    const bottom = this.data.elevation;
-    const top = this.losHeight;
+    updateTokenSourceBounds(this);
+  }
+
+  function updateTokenSourceBounds(token) {
+    const { advancedVision } = getSceneSettings(token.scene);
+    let bottom, top;
+    bottom = top = token.losHeight;
     if (!advancedVision) {
-      if (canvas.sight.sources.has(this.sourceId)) {
-        this.vision.los.origin.b = bottom;
-        this.vision.los.origin.t = top;
+      if (canvas.sight.sources.has(token.sourceId)) {
+        token.vision.los.origin.b = bottom;
+        token.vision.los.origin.t = top;
       }
-      if (canvas.lighting.sources.has(this.sourceId)) {
-        this.light.los.origin.b = bottom;
-        this.light.los.origin.t = top;
+      if (canvas.lighting.sources.has(token.sourceId)) {
+        token.light.los.origin.b = bottom;
+        token.light.los.origin.t = top;
       }
-    } else if (canvas.sight.sources.has(this.sourceId) && (this.vision.los.origin.b !== bottom || this.vision.los.origin.t !== top)
-      || canvas.lighting.sources.has(this.sourceId) && (this.light.los.origin.b !== bottom || this.light.los.origin.t !== top)) {
-      this.updateSource({ defer: true });
+    } else if (canvas.sight.sources.has(token.sourceId) && (token.vision.los.origin.b !== bottom || token.vision.los.origin.t !== top)
+      || canvas.lighting.sources.has(token.sourceId) && (token.light.los.origin.b !== bottom || token.light.los.origin.t !== top)) {
+      token.updateSource({ defer: true });
       canvas.perception.schedule({
         lighting: { refresh: true },
         sight: { refresh: true, forceUpdateFog: true },
@@ -297,8 +301,7 @@ export function registerWrappers() {
     if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
       if (object instanceof Token) {
-        bottom = config.type !== "move" ? object.losHeight : object.data.elevation;
-        top = object.losHeight;
+        bottom = top = config.type !== "move" ? object.losHeight : object.data.elevation;
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
           const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
@@ -318,6 +321,21 @@ export function registerWrappers() {
     origin.b = origin.b ?? bottom;
     origin.t = origin.t ?? top;
     return wrapped(origin, config, ...args);
+  }
+
+  if (game.system.id !== "pf2e") {
+    function onActiveEffect(effect) {
+      const actor = effect.parent;
+      if (actor instanceof Actor) {
+        for (const token of actor.getActiveTokens()) {
+          updateTokenSourceBounds(token);
+        }
+      }
+    }
+
+    Hooks.on("createActiveEffect", onActiveEffect);
+    Hooks.on("updateActiveEffect", onActiveEffect);
+    Hooks.on("deleteActiveEffect", onActiveEffect);
   }
 
   Hooks.on("updateToken", () => {

@@ -1,6 +1,7 @@
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY } from "./const.js";
 
 export function getTokenLOSheight(token) {
+  if (isTokenProne(token)) return token.data.elevation;
   let losDiff;
   let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
   if (WallHeight._autoLosHeight) {
@@ -14,6 +15,18 @@ export function getTokenLOSheight(token) {
   }
 
   return token.data.elevation + losDiff / divideBy;
+}
+
+export function isTokenProne(token) {
+  switch (game.system.id) {
+    case "pf2e":
+      return token.actor?.hasCondition("prone") ?? false;
+    case "pf1":
+      return token.actor?.effects.some(e => e.getFlag("core", "statusId") === "pf1_prone") ?? false;
+    // D35E: no prone condition?
+  }
+  // dnd5e, dnd4e, sfrpg, dsa5, cyberpunk2020, shadowrun5e, swade, wfrp4e, ...
+  return token.actor?.effects.some(e => e.getFlag("core", "statusId") === "prone") ?? false;
 }
 
 export function getAdvancedLighting(document){
