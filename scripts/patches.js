@@ -220,21 +220,23 @@ export function registerWrappers() {
   function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
 
-    const { advancedVision } = getSceneSettings(this.scene);
-    const bottom = this.data.elevation;
-    const top = this.losHeight;
+    updateTokenSourceBounds(this);
+  }
+
+  function updateTokenSourceBounds(token) {
+    const { advancedVision } = getSceneSettings(token.scene);
+    const losHeight = token.losHeight;
+    const sourceId = token.sourceId;
     if (!advancedVision) {
-      if (canvas.sight.sources.has(this.sourceId)) {
-        this.vision.los.origin.b = bottom;
-        this.vision.los.origin.t = top;
+      if (canvas.sight.sources.has(sourceId)) {
+        token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
       }
-      if (canvas.lighting.sources.has(this.sourceId)) {
-        this.light.los.origin.b = bottom;
-        this.light.los.origin.t = top;
+      if (canvas.lighting.sources.has(sourceId)) {
+        token.light.los.origin.b = token.light.los.origin.t = losHeight;
       }
-    } else if (canvas.sight.sources.has(this.sourceId) && (this.vision.los.origin.b !== bottom || this.vision.los.origin.t !== top)
-      || canvas.lighting.sources.has(this.sourceId) && (this.light.los.origin.b !== bottom || this.light.los.origin.t !== top)) {
-      this.updateSource({ defer: true });
+    } else if (canvas.sight.sources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
+      || canvas.lighting.sources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
+      token.updateSource({ defer: true });
       canvas.perception.schedule({
         lighting: { refresh: true },
         sight: { refresh: true, forceUpdateFog: true },
