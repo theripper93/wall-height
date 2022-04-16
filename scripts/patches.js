@@ -296,8 +296,12 @@ export function registerWrappers() {
     if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
       if (object instanceof Token) {
-        bottom = config.type !== "move" ? object.losHeight : object.data.elevation;
-        top = object.losHeight;
+        if (config.type !== "move") {
+          bottom = top = object.losHeight;
+        } else {
+          bottom = object.data.elevation;
+          top = WallHeight._blockSightMovement ? object.losHeight : bottom;
+        }
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
           const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
