@@ -6,7 +6,8 @@ class WallHeightUtils{
   constructor(){
     this._advancedVision = null;
     this._currentTokenElevation = null;
-    this.isLevels = game.modules.get("levels")?.active;
+    this.isLevels = game.modules.get("levels")?.active ?? false;
+    this._isLevelsAutoCover = game.modules.get("levelsautocover")?.active ?? false;
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
   }
@@ -15,6 +16,7 @@ class WallHeightUtils{
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
+    this.schedulePerceptionUpdate();
   }
 
   get tokenElevation(){
@@ -44,6 +46,7 @@ class WallHeightUtils{
   }
 
   schedulePerceptionUpdate(){
+    if (!canvas.ready) return;
     canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
       sight: { initialize: true, refresh: true, forceUpdateFog: true },
@@ -220,21 +223,23 @@ export function registerWrappers() {
   function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
 
-    const { advancedVision } = getSceneSettings(this.scene);
-    const bottom = this.data.elevation;
-    const top = this.losHeight;
+    updateTokenSourceBounds(this);
+  }
+
+  function updateTokenSourceBounds(token) {
+    const { advancedVision } = getSceneSettings(token.scene);
+    const losHeight = token.losHeight;
+    const sourceId = token.sourceId;
     if (!advancedVision) {
-      if (canvas.sight.sources.has(this.sourceId)) {
-        this.vision.los.origin.b = bottom;
-        this.vision.los.origin.t = top;
+      if (canvas.sight.sources.has(sourceId)) {
+        token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
       }
-      if (canvas.lighting.sources.has(this.sourceId)) {
-        this.light.los.origin.b = bottom;
-        this.light.los.origin.t = top;
+      if (canvas.lighting.sources.has(sourceId)) {
+        token.light.los.origin.b = token.light.los.origin.t = losHeight;
       }
-    } else if (canvas.sight.sources.has(this.sourceId) && (this.vision.los.origin.b !== bottom || this.vision.los.origin.t !== top)
-      || canvas.lighting.sources.has(this.sourceId) && (this.light.los.origin.b !== bottom || this.light.los.origin.t !== top)) {
-      this.updateSource({ defer: true });
+    } else if (canvas.sight.sources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
+      || canvas.lighting.sources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
+      token.updateSource({ defer: true });
       canvas.perception.schedule({
         lighting: { refresh: true },
         sight: { refresh: true, forceUpdateFog: true },
@@ -294,8 +299,12 @@ export function registerWrappers() {
     if (origin.b == undefined && origin.t == undefined) {
       const object = config.source?.object;
       if (object instanceof Token) {
-        bottom = config.type !== "move" ? object.losHeight : object.data.elevation;
-        top = object.losHeight;
+        if (config.type !== "move") {
+          bottom = top = object.losHeight;
+        } else {
+          bottom = object.data.elevation;
+          top = WallHeight._blockSightMovement ? object.losHeight : bottom;
+        }
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {
           const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
