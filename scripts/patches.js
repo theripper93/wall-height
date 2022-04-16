@@ -6,7 +6,8 @@ class WallHeightUtils{
   constructor(){
     this._advancedVision = null;
     this._currentTokenElevation = null;
-    this.isLevels = game.modules.get("levels")?.active;
+    this.isLevels = game.modules.get("levels")?.active ?? false;
+    this._isLevelsAutoCover = game.modules.get("levelsautocover")?.active ?? false;
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
   }
@@ -15,6 +16,7 @@ class WallHeightUtils{
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
+    this.schedulePerceptionUpdate();
   }
 
   get tokenElevation(){
@@ -44,6 +46,7 @@ class WallHeightUtils{
   }
 
   schedulePerceptionUpdate(){
+    if (!canvas.ready) return;
     canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
       sight: { initialize: true, refresh: true, forceUpdateFog: true },
