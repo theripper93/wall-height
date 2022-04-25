@@ -13,13 +13,15 @@ Object.defineProperty(Token.prototype, "losHeight", {
 
 Hooks.once("init",()=>{
     registerWrappers();
-    Hooks.on('renderHeadsUpDisplay', async (app, html, data) => {
-        if(game.settings.get(MODULE_ID,'enableTooltip')){
+    registerSettings();
+    if(game.settings.get(MODULE_ID,'enableTooltip')){
+        Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
+            canvas.hud.wallHeight?.close();
+            html.find("#wall-height-tooltip").remove();
             html.append('<template id="wall-height-tooltip"></template>');
             canvas.hud.wallHeight = new WallHeightToolTip();
-        }
-    });
-    registerSettings();
+        });
+    }
     WallHeight.cacheSettings();
 });
 
