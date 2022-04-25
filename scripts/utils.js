@@ -2,7 +2,7 @@ import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY } from "./const.js";
 
 export function getTokenLOSheight(token) {
   let losDiff;
-  let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
+  let divideBy = WallHeight._isLevelsAutoCover && token.data.flags.levelsautocover?.ducking ? 3 : 1;
   if (WallHeight._autoLosHeight) {
     losDiff =
       token.data.flags[MODULE_SCOPE]?.tokenHeight ||
@@ -34,7 +34,7 @@ export function getLevelsBounds(document){
 }
 
 export function getSceneSettings(scene) {
-    let advancedVision = scene.getFlag(MODULE_SCOPE,"advancedVision") ?? true;
+    let advancedVision = scene.data.flags[MODULE_SCOPE]?.advancedVision ?? true;
     return {advancedVision};
 }
 

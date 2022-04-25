@@ -11,7 +11,7 @@
         "elevation": "Elevation",
         "levelsRangeTop": "Height (Top)",
         "levelsRangeBottom": "Height (Bottom)",
-        "distance": "(Grid Units)",
+        "distance": "Grid Units",
         "settings.globalAdvancedLighting.name": "Enable 'Constrained by Elevation' Globally",
         "settings.globalAdvancedLighting.hint": "Area of effect sources will be constrained by walls corresponding the elevation the source instead of the elevation of the controlled token.",
         "advancedLightingLabel": "Constrained by Elevation",
