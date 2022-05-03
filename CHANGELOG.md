@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.8]
+
+  - Performance improvements and tooltip fix
+
 ## [4.2.7]
 
   - Changed token sight behaviour to use only losHeight instead of a range
