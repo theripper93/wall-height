@@ -5,6 +5,7 @@
         "AdvancedVisionLabel": "Enable Wall-Height For This Scene",
         "AdvancedMovementLabel": "Enable Wall-Height Movement For This Scene",
         "tokenHeightLabel": "Token Height",
+        "tokenHeightHint": "Computed Token Height {{height}}, Line of Sight Elevation {{losHeight}}",
         "tokenHeightNotes": "This is the height of the token in the scene. It is used to calculate it's vision relative to walls.",
         "ModuleLabel": "Wall Height",
         "ALGlobal": "This Setting is enabled Globally in the module settings.",

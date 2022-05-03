@@ -247,13 +247,17 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 Hooks.on("renderTokenConfig", (app, html, data) => {
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
+    const losHeight = app.object?.object?.losHeight ?? 0;
+    const height = losHeight - app.token.data.elevation;
+    const hint = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightHint`).replace("{{height}}", height).replace("{{losHeight}}", losHeight);
     const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     let newHtml = `
   <div class="form-group slim">
               <label>${label} <span class="units">(${distance})</span></label>
               <div class="form-fields">
               <input type="number" step="any" name="flags.${MODULE_SCOPE}.tokenHeight" placeholder="units" value="${tokenHeight}">
-              </div>         
+              </div>
+              ${app.object?.object?.losHeight ? `<p class="hint">${hint}</p>` : ""}         
             </div>
   `;
     html.find('input[name="lockRotation"]').closest(".form-group").before(newHtml);
