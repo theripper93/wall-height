@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.2.9]
+
+  - Added Computed token height and line of sight elevation in placeable token config
+
 ## [4.2.8]
 
   - Performance improvements and tooltip fix
