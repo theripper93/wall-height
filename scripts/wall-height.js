@@ -35,7 +35,7 @@ Hooks.once("ready", ()=>{
 })
 
 Hooks.on("hoverWall",(wall, hovered)=>{
-    if (!canvas.hud?.wallHeight) return;
+    if (!canvas.hud?.wallHeight || canvas.walls._chain) return;
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(advancedVision!=null && !advancedVision)
         return;
@@ -69,7 +69,19 @@ function registerSettings() {
         scope: 'world',
         config: true,
         type: Boolean,
-        default: true
+        default: false
+    });
+
+    game.settings.register(MODULE_ID, 'enableWallText', {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.enableWallText.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.enableWallText.hint`),
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
     });
 
     game.settings.register(MODULE_ID, "blockSightMovement", {

@@ -16,6 +16,7 @@ class WallHeightUtils{
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
+    this._enableWallText = game.settings.get(MODULE_ID, "enableWallText");
     this.schedulePerceptionUpdate();
   }
 
@@ -326,6 +327,26 @@ export function registerWrappers() {
     return wrapped(origin, config, ...args);
   }
 
+  function drawWallRange(wrapped, ...args){
+    if(!WallHeight._enableWallText) return wrapped(...args);
+    wrapped(...args);
+    const style = CONFIG.canvasTextStyle.clone();
+    style.fontSize /= 1.5;
+    style.fill = this._getWallColor();
+    const bounds = getWallBounds(this);
+    if(bounds.top == Infinity) bounds.top = "Inf";
+    if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
+    const range = `${bounds.top} / ${bounds.bottom}`;
+    const oldText = this.children.find(c => c.name === "wall-height-text");
+    const text = oldText ?? new PreciseText(range, style);
+    text.text = range;
+    const angle = Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI )
+    text.position.set(this.center.x, this.center.y);
+    text.anchor.set(0.5, 0.5);
+    text.angle = angle;
+    if(!oldText) this.addChild(text);
+  }
+
   Hooks.on("updateToken", () => {
     WallHeight.updateCurrentTokenElevation();
   });
@@ -359,4 +380,6 @@ export function registerWrappers() {
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
+
+  libWrapper.register(MODULE_ID, "Wall.prototype.refresh", drawWallRange, "WRAPPER");
 }
