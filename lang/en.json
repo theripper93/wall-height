@@ -19,7 +19,7 @@
         "advancedLightingNotes": "Configure whether area of effect for this source is contrained by walls corresponding the elevation of this source instead of the elevation of the controlled token.",
         "settings.enableTooltip.name": "Enable Tooltip",
         "settings.enableTooltip.hint": "Enables the tooltip on the walls layer, showing top and bottom dimensions of walls. If you currently have the wall layer up, you should refresh or move to another scene and back to refresh.",
-        "settings.enableWallText.name": "Show Wall Elevation",
+        "settings.enableWallText.name": "Display height on Walls",
         "settings.enableWallText.hint": "Show the top and bottom elevations of the walls on the wall itself. (requires refresh)",
         "settings.migrateOnStartup.name": "Migrate Wall-Height Data On Startup",
         "settings.migrateOnStartup.hint": "Migrates wall-height data from the old wall-height data structure to the new one. This is only necessary once but you can enable this settings and refresh the page if you need to run it again.",
