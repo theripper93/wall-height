@@ -3,13 +3,35 @@
 		"LANGUAGE": "Español",
 		"MAINTAINERS": "@Viriato139ac#0342"
 	},
-    "wallHeight": {
-        "WallHeightTopLabel": "Altura del muro (Arriba)",
-        "WallHeightBottomLabel": "Altura del muro (Abajo)",
+    "wall-height": {
+        "WallHeightTopLabel": "Altura del muro (Superior)",
+        "WallHeightBottomLabel": "Altura del muro (Inferior)",
         "AdvancedVisionLabel": "Habilitar altura de los muros para esta escena",
         "AdvancedMovementLabel": "Habilitar movimiento con la altura de los muros para esta escena",
+        "tokenHeightLabel": "Altura de icono",
+        "tokenHeightHint": "Altura de icono calculada {{height}}, elevación de la linea de visión {{losHeight}}",
+        "tokenHeightNotes": "Esta es la altura del icono para esta escena. Se usa para calcular su visión en relación a los muros",
         "ModuleLabel": "Altura de muros",
-        "enableTokenHeight.name": "Habilitar altura de muros",
-        "enableTokenHeight.hint": "Incluye la altura del icono (debidamente escalada a la escena) cuando se compruebe si se puede ver sobre un muro"
+        "ALGlobal": "Este ajuste se habilita globalmente en la configuración del módulo",
+        "elevation": "Elevación",
+        "levelsRangeTop": "Altura (Superior)",
+        "levelsRangeBottom": "Altura (Inferior)",
+        "distance": "Unidades de rejilla",
+        "settings.globalAdvancedLighting.name": "Habilite globalmente 'Restringido por la elevación'",
+        "settings.globalAdvancedLighting.hint": "Las fuentes de área de efecto quedarán restringidas por los muros en relación a la elevación de la fuente en lugar de la del icono controlado",
+        "advancedLightingLabel": "Restringido por la elevación",
+        "advancedLightingNotes": "Configura si el área de efecto de esta fuente está restringida por los muros en relación a la elevación de la fuente en lugar de la del icono controlado",
+        "settings.enableTooltip.name": "Habilitar globos",
+        "settings.enableTooltip.hint": "Habilita globos informativos en la capa de muros, que muestran las dimensiones superior e inferior de los muros. Si ya tiene la capa de muros activa, debe refrescar la página o cambiar de escena y volver para que se apliquen los cambios",
+        "settings.enableWallText.name": "Mostrar altura de los muros",
+        "settings.enableWallText.hint": "Mostrar elevaciones superior e inferior en los propios muros (requiere actualizar la página)",
+        "settings.migrateOnStartup.name": "Migrar datos de Wall-Height al inicio",
+        "settings.migrateOnStartup.hint": "Realizar la migración de los datos de wall-height de la estructura antigua a la nueva. Esto solo es necesario realizarlo una vez, pero puede habilitar este ajustes y actualizar la página para forzar la migración",
+        "settings.blockSightMovement.name": "Abovedar",
+        "settings.blockSightMovement.hint": "Permite que los iconos se muevan sobre los muros si la diferencia de elevación entre la base del icono y la parte superior del muro no es superior que la altura del icono",
+        "settings.autoLOSHeight.name": "Altura de icono automática",
+        "settings.autoLOSHeight.hint": "Calcula la altura de icono automáticamente usando el tamaño del icono y la escala.\nLa altura del icono será calculada pra cualquier icono que no tenga un valor personalizado de altura de 0. La altura de icono por defecto se ignorará",
+        "settings.defaultLosHeight.name": "Altura de icono por defecto",
+        "settings.defaultLosHeight.hint": "Altura del icono (donde se situan los ojos de la criatura) en unidades. Por defecto es 6"
     }
 }
