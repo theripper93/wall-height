@@ -340,6 +340,7 @@ export function registerWrappers() {
     const oldText = this.children.find(c => c.name === "wall-height-text");
     const text = oldText ?? new PreciseText(range, style);
     text.text = range;
+    text.name = "wall-height-text";
     const angle = Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI )
     text.position.set(this.center.x, this.center.y);
     text.anchor.set(0.5, 0.5);
