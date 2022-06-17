@@ -328,12 +328,13 @@ export function registerWrappers() {
   }
 
   function drawWallRange(wrapped, ...args){
-    if(!WallHeight._enableWallText) return wrapped(...args);
+    const { advancedVision } = getSceneSettings(canvas.scene);
+    const bounds = getWallBounds(this);
+    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) return wrapped(...args);
     wrapped(...args);
     const style = CONFIG.canvasTextStyle.clone();
     style.fontSize /= 1.5;
     style.fill = this._getWallColor();
-    const bounds = getWallBounds(this);
     if(bounds.top == Infinity) bounds.top = "Inf";
     if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
     const range = `${bounds.top} / ${bounds.bottom}`;
@@ -341,7 +342,9 @@ export function registerWrappers() {
     const text = oldText ?? new PreciseText(range, style);
     text.text = range;
     text.name = "wall-height-text";
-    const angle = Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI )
+    let angle = (Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI ));
+    angle = (angle+90)%180 - 90;
+    console.log(angle)
     text.position.set(this.center.x, this.center.y);
     text.anchor.set(0.5, 0.5);
     text.angle = angle;
@@ -372,9 +375,9 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
-  libWrapper.register(MODULE_ID, "Token.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
+  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Token.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
+  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
 
   libWrapper.register(MODULE_ID, "Ruler.prototype._getRaysFromWaypoints", rulerGetRaysFromWaypoints, "WRAPPER");
 
