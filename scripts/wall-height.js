@@ -179,7 +179,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
@@ -194,8 +194,8 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     app.setPosition({ height: "auto" });
 
     if(WallHeight.isLevels) return
-    const bottom = app.object.data.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.data.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.document.flags?.levels?.rangeBottom ?? -Infinity;
+    const top = app.object.document.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
@@ -223,7 +223,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
     const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
@@ -236,8 +236,8 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
     app.setPosition({ height: "auto" });
     if(WallHeight.isLevels) return
-    const bottom = app.object.data.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.data.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.document.flags?.levels?.rangeBottom ?? -Infinity;
+    const top = app.object.document.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
@@ -260,9 +260,9 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
     const losHeight = app.object?.object?.losHeight ?? 0;
-    const height = losHeight - app.token.data.elevation;
+    const height = losHeight - app.token.document.elevation;
     const hint = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightHint`).replace("{{height}}", height).replace("{{losHeight}}", losHeight);
-    const distance = (app.object.parent?.data.gridUnits ?? game.system.data.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     let newHtml = `
   <div class="form-group slim">
               <label>${label} <span class="units">(${distance})</span></label>
@@ -306,7 +306,7 @@ Handlebars.registerHelper('if_null', function(a, opts) {
 
 Hooks.once("ready", () => {
     // Module title
-    const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
+    const MODULE_TITLE = game.modules.get(MODULE_ID).title;
   
     const FALLBACK_MESSAGE_TITLE = "IMPORTANT - Wall Height 4";
     const FALLBACK_MESSAGE = `<large>

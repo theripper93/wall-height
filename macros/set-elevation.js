@@ -47,7 +47,7 @@ else
         token.update({
             "elevation": parseFloat(elevation)
         });
-        //token.data.elevation=parseInt(elevation);
+        //token.document.elevation=parseInt(elevation);
 
         }
       }

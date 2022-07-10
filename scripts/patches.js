@@ -21,7 +21,7 @@ class WallHeightUtils{
   }
 
   get tokenElevation(){
-    return this._token?.data?.elevation ?? this.currentTokenElevation
+    return this._token?.document?.elevation ?? this.currentTokenElevation
   }
 
   set currentTokenElevation(elevation) {
@@ -74,7 +74,7 @@ class WallHeightUtils{
 
   getSourceElevationTop(document) {
     if (document instanceof TokenDocument) return document.object.losHeight
-    return document.data.flags?.levels?.rangeTop ?? +Infinity;
+    return document.document.flags?.levels?.rangeTop ?? +Infinity;
   }
 
   async setSourceElevationBottom(document, value) {
@@ -83,8 +83,8 @@ class WallHeightUtils{
   }
 
   getSourceElevationBottom(document) {
-    if (document instanceof TokenDocument) return document.data.elevation;
-    return document.data.flags?.levels?.rangeBottom ?? -Infinity;
+    if (document instanceof TokenDocument) return document.document.elevation;
+    return document.document.flags?.levels?.rangeBottom ?? -Infinity;
   }
 
   async setSourceElevationBounds(document, bottom, top) {
@@ -94,7 +94,7 @@ class WallHeightUtils{
 
   getSourceElevationBounds(document) {
     if (document instanceof TokenDocument) {
-      const bottom = document.data.elevation;
+      const bottom = document.document.elevation;
       const top = document.object
         ? document.object.losHeight
         : bottom;
@@ -110,7 +110,7 @@ class WallHeightUtils{
 
   getSourceElevationBounds(document) {
     if (document instanceof TokenDocument) {
-      const bottom = document.data.elevation;
+      const bottom = document.elevation;
       const top = document.object
       ? document.object.losHeight
       : bottom;
@@ -124,7 +124,7 @@ class WallHeightUtils{
     const walls = Array.from(scene.walls);
     const updates = [];
     for(let wall of walls){
-      const oldTop = wall.data.flags?.["wall-height"]?.top;
+      const oldTop = wall.document.flags?.["wall-height"]?.top;
       if(oldTop != null && oldTop != undefined){
         const newTop = oldTop - 1;
         updates.push({_id: wall.id, "flags.wall-height.top": newTop});
@@ -206,8 +206,8 @@ class WallHeightUtils{
 
   addBoundsToRays(rays, token) {
     if (token) {
-      const bottom = token.data.elevation;
-      const top = WallHeight._blockSightMovement ? token.losHeight : token.data.elevation;
+      const bottom = token.document.elevation;
+      const top = WallHeight._blockSightMovement ? token.losHeight : token.document.elevation;
       for (const ray of rays) {
         ray.A.b = bottom;
         ray.A.t = top;
@@ -232,13 +232,13 @@ export function registerWrappers() {
     const losHeight = token.losHeight;
     const sourceId = token.sourceId;
     if (!advancedVision) {
-      if (canvas.sight.sources.has(sourceId)) {
+      if (canvas.effects.visionSources.has(sourceId)) {
         token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
       }
       if (canvas.lighting.sources.has(sourceId)) {
         token.light.los.origin.b = token.light.los.origin.t = losHeight;
       }
-    } else if (canvas.sight.sources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
+    } else if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
       || canvas.lighting.sources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
       canvas.perception.schedule({
@@ -250,28 +250,39 @@ export function registerWrappers() {
     }
   }
 
-  function tokenCheckCollision(destination) {
-    // Create a Ray for the attempted move
-    let origin = this.getCenter(...Object.values(this._validPosition));
-    let ray = new Ray({x: origin.x, y: origin.y, b: this.data.elevation, t: WallHeight._blockSightMovement ? this.losHeight : this.data.elevation }, {x: destination.x, y: destination.y});
-
-    // Shift the origin point by the prior velocity
-    ray.A.x -= this._velocity.sx;
-    ray.A.y -= this._velocity.sy;
-
-    // Shift the destination point by the requested velocity
-    ray.B.x -= Math.sign(ray.dx);
-    ray.B.y -= Math.sign(ray.dy);
-
-    // Check for a wall collision
-    return canvas.walls.checkCollision(ray);
+  function tokenCheckCollision(wrapped, ...args) {
+    args[1]??= {};
+    args[1].object = this;
+    return wrapped(...args);    
   }
 
-  function rulerGetRaysFromWaypoints(wrapped, ...args) {
-    const rays = wrapped(...args);
+  function wallsCheckCollision(wrapped, ...args) {
+    args[0].A.object = args[1]?.object;
+    return wrapped(...args);
+  }
+
+  async function moveToken() {
+    if ( game.paused && !game.user.isGM ) {
+      ui.notifications.warn("GAME.PausedWarning", {localize: true});
+      return false;
+    }
+    if ( !this.visible || !this.destination ) return false;
+
+    // Get the Token which should move
     const token = this._getMovementToken();
-    WallHeight.addBoundsToRays(rays, token);
-    return rays;
+    if ( !token ) return false;
+
+    // Test collision for each measured segment
+    const hasCollision = this.segments.some(s => canvas.walls.checkCollision(s.ray, {type: "move", mode: "any", object: token}));
+    if ( hasCollision ) {
+      ui.notifications.error("ERROR.TokenCollide", {localize: true});
+      return false;
+    }
+
+    // Execute the movement path defined by each ray
+    await this._animateMovement(token);
+    this._endMeasurement();
+    return true;
   }
 
   function testWallInclusion(wrapped, wall, origin, type) {
@@ -279,15 +290,15 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
-    const b = origin.b ?? -Infinity;
-    const t = origin.t ?? +Infinity;
+    const b = this.config?.source?.object?.b ?? this.origin?.object?.b ?? -Infinity;
+    const t = this.config?.source?.object?.t ?? this.origin?.object?.t ?? +Infinity;
     return b >= bottom && t <= top;
   } 
 
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
-    const elevation = WallHeight.isLevels && _levels?.UI?.rangeEnabled && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.data?.elevation;
+    const elevation = WallHeight.isLevels && _levels?.UI?.rangeEnabled && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.document?.elevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
     if (elevation < bottom || elevation > top) return false;
@@ -297,13 +308,13 @@ export function registerWrappers() {
   function setSourceElevation(wrapped, origin, config = {}, ...args) {
     let bottom = -Infinity;
     let top = +Infinity;
+    const object = config.source?.object ?? origin.object;
     if (origin.b == undefined && origin.t == undefined) {
-      const object = config.source?.object;
       if (object instanceof Token) {
         if (config.type !== "move") {
           bottom = top = object.losHeight;
         } else {
-          bottom = object.data.elevation;
+          bottom = object.document.elevation;
           top = WallHeight._blockSightMovement ? object.losHeight : bottom;
         }
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
@@ -322,8 +333,10 @@ export function registerWrappers() {
         }
       }
     }
-    origin.b = origin.b ?? bottom;
-    origin.t = origin.t ?? top;
+    if(object){
+      object.b = origin.b ?? bottom;
+      object.t = origin.t ?? top;
+    }
     return wrapped(origin, config, ...args);
   }
 
@@ -377,11 +390,13 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.checkCollision", tokenCheckCollision, "OVERRIDE");
+  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.checkCollision", tokenCheckCollision, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Ruler.prototype._getRaysFromWaypoints", rulerGetRaysFromWaypoints, "WRAPPER");
+  libWrapper.register(MODULE_ID, "WallsLayer.prototype.checkCollision", wallsCheckCollision, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "Ruler.prototype.moveToken", moveToken, "OVERRIDE");
+
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 
