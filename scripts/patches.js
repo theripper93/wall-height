@@ -250,43 +250,9 @@ export function registerWrappers() {
     }
   }
 
-  function tokenCheckCollision(wrapped, ...args) {
-    args[1]??= {};
-    args[1].object = this;
-    return wrapped(...args);    
-  }
-
-  function wallsCheckCollision(wrapped, ...args) {
-    args[0].A.object = args[1]?.object;
-    return wrapped(...args);
-  }
-
-  async function moveToken() {
-    if ( game.paused && !game.user.isGM ) {
-      ui.notifications.warn("GAME.PausedWarning", {localize: true});
-      return false;
-    }
-    if ( !this.visible || !this.destination ) return false;
-
-    // Get the Token which should move
-    const token = this._getMovementToken();
-    if ( !token ) return false;
-
-    // Test collision for each measured segment
-    const hasCollision = this.segments.some(s => canvas.walls.checkCollision(s.ray, {type: "move", mode: "any", object: token}));
-    if ( hasCollision ) {
-      ui.notifications.error("ERROR.TokenCollide", {localize: true});
-      return false;
-    }
-
-    // Execute the movement path defined by each ray
-    await this._animateMovement(token);
-    this._endMeasurement();
-    return true;
-  }
-
-  function testWallInclusion(wrapped, wall, origin, type) {
-    if (!wrapped(wall, origin, type)) return false;
+  function testWallInclusion(wrapped, ...args) {
+    if (!wrapped(...args)) return false;
+    const wall = args[0]
     const { advancedVision } = getSceneSettings(wall.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
@@ -306,6 +272,7 @@ export function registerWrappers() {
   }
 
   function setSourceElevation(wrapped, origin, config = {}, ...args) {
+
     let bottom = -Infinity;
     let top = +Infinity;
     const object = config.source?.object ?? origin.object;
@@ -389,12 +356,6 @@ export function registerWrappers() {
   libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
-
-  libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype.checkCollision", tokenCheckCollision, "WRAPPER");
-
-  libWrapper.register(MODULE_ID, "WallsLayer.prototype.checkCollision", wallsCheckCollision, "WRAPPER");
-
-  libWrapper.register(MODULE_ID, "Ruler.prototype.moveToken", moveToken, "OVERRIDE");
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
