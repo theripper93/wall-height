@@ -179,7 +179,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.grid.units ?? game.system.grid.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
@@ -223,7 +223,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
     const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.grid.units ?? game.system.grid.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
     const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
@@ -262,7 +262,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
     const losHeight = app.object?.object?.losHeight ?? 0;
     const height = losHeight - app.token.elevation;
     const hint = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightHint`).replace("{{height}}", height).replace("{{losHeight}}", losHeight);
-    const distance = (app.object.parent?.document.gridUnits ?? game.system.document.gridUnits) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const distance = (app.object.parent?.grid.units ?? game.system.grid.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     let newHtml = `
   <div class="form-group slim">
               <label>${label} <span class="units">(${distance})</span></label>
