@@ -8,7 +8,7 @@ export function getTokenLOSheight(token) {
       token.document.flags[MODULE_SCOPE]?.tokenHeight ||
       canvas.scene.dimensions.distance *
         Math.max(token.document.width, token.document.height) *
-        ((token.document.texture.scaleX * token.document.texture.scaleY) / 2);
+        ((token.document.texture.scaleX + token.document.texture.scaleY) / 2);
   } else {
     losDiff = token.document.flags[MODULE_SCOPE]?.tokenHeight || WallHeight._defaultTokenHeight;
   }
