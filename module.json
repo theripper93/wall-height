@@ -60,5 +60,8 @@
   "compatibility": {
     "minimum": "10",
     "verified": "10"
-  }
+  },
+
+  "name": "wall-height",
+  "minimumCoreVersion": "10"
 }
