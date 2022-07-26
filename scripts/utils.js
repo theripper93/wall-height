@@ -71,8 +71,8 @@ export async function migrateData(scene){
   const walls = Array.from(scene.walls);
   const updates = [];
   for (const wall of walls) {
-      const oldTop = wall.document.flags?.wallHeight?.wallHeightTop;
-      const oldBottom = wall.document.flags?.wallHeight?.wallHeightBottom;
+      const oldTop = wall.flags?.wallHeight?.wallHeightTop;
+      const oldBottom = wall.flags?.wallHeight?.wallHeightBottom;
       if ((oldTop !== null && oldTop !== undefined) || (oldBottom !== null && oldBottom !== undefined)) {
           const update = {
             _id: wall.id,
@@ -84,9 +84,9 @@ export async function migrateData(scene){
               "-=wallHeight": null
             },
           };
-    if(wall.document.flags['token-attacher']){
-      const oldOffsetTop = wall.document.flags?.['token-attacher']?.offset?.elevation?.flags?.wallHeight?.wallHeightTop;
-      const oldOffsetBottom = wall.document.flags?.['token-attacher']?.offset?.elevation?.flags?.wallHeight?.wallHeightBottom;
+    if(wall.flags['token-attacher']){
+      const oldOffsetTop = wall.flags?.['token-attacher']?.offset?.elevation?.flags?.wallHeight?.wallHeightTop;
+      const oldOffsetBottom = wall.flags?.['token-attacher']?.offset?.elevation?.flags?.wallHeight?.wallHeightBottom;
       if ((oldTop !== null && oldTop !== undefined) || (oldBottom !== null && oldBottom !== undefined)) {
         setProperty(update, `flags.token-attacher.offset.elevation.flags.wall-height`,{
           top: oldOffsetTop,

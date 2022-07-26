@@ -48,12 +48,16 @@ class WallHeightUtils{
 
   schedulePerceptionUpdate(){
     if (!canvas.ready) return;
-    canvas.perception.schedule({
-      lighting: { initialize: true, refresh: true },
-      sight: { initialize: true, refresh: true, forceUpdateFog: true },
-      sounds: { initialize: true, refresh: true },
-      foreground: { refresh: true }
-    });
+    canvas.perception.update({
+      forceUpdateFog: true,
+      initializeLighting: true,
+      initializeSounds: true,
+      initializeVision: true,
+      refreshLighting: true,
+      refreshSounds: true,
+      refreshTiles: true,
+      refreshVision: true,
+    }, true);
   }
 
   updateCurrentTokenElevation() {
@@ -241,12 +245,16 @@ export function registerWrappers() {
     } else if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
       || canvas.lighting.sources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
-      canvas.perception.schedule({
-        lighting: { refresh: true },
-        sight: { refresh: true, forceUpdateFog: true },
-        sounds: { refresh: true },
-        foreground: { refresh: true }
-      });
+      canvas.perception.update({
+        forceUpdateFog: true,
+        initializeLighting: true,
+        initializeSounds: true,
+        initializeVision: true,
+        refreshLighting: true,
+        refreshSounds: true,
+        refreshTiles: true,
+        refreshVision: true,
+      }, true);
     }
   }
 
