@@ -194,8 +194,8 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     app.setPosition({ height: "auto" });
 
     if(WallHeight.isLevels) return
-    const bottom = app.object.document.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.document.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.flags?.levels?.rangeBottom ?? -Infinity;
+    const top = app.object.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
@@ -236,8 +236,8 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
     app.setPosition({ height: "auto" });
     if(WallHeight.isLevels) return
-    const bottom = app.object.document.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.document.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.flags?.levels?.rangeBottom ?? -Infinity;
+    const top = app.object.flags?.levels?.rangeTop ?? Infinity;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
