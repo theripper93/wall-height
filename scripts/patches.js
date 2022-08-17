@@ -332,7 +332,6 @@ export function registerWrappers() {
     text.name = "wall-height-text";
     let angle = (Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI ));
     angle = (angle+90)%180 - 90;
-    console.log(angle)
     text.position.set(this.center.x, this.center.y);
     text.anchor.set(0.5, 0.5);
     text.angle = angle;
