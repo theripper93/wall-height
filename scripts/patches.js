@@ -239,11 +239,11 @@ export function registerWrappers() {
       if (canvas.effects.visionSources.has(sourceId)) {
         token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
       }
-      if (canvas.lighting.sources.has(sourceId)) {
+      if (canvas.effects.lightSources.has(sourceId)) {
         token.light.los.origin.b = token.light.los.origin.t = losHeight;
       }
     } else if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
-      || canvas.lighting.sources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
+      || canvas.effects.lightSources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
       canvas.perception.update({
         forceUpdateFog: true,
