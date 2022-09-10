@@ -272,11 +272,13 @@ export function registerWrappers() {
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
-    const elevation = WallHeight.isLevels && CONFIG.Levels?.UI?.rangeEnabled && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.document?.elevation;
+    const isUI = WallHeight.isLevels && CONFIG.Levels?.UI?.rangeEnabled
+    const elevation = isUI && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.document?.elevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
     const { top, bottom } = getWallBounds(wall);
-    if (elevation < bottom || elevation > top) return false;
-    return wrapped(...args);
+    const inRange = elevation >= bottom && elevation <= top;
+    //if (elevation < bottom || elevation > top) return false;
+    return wrapped(...args) && inRange;
   }
 
   function setSourceElevation(wrapped, origin, config = {}, ...args) {
