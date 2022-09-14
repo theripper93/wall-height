@@ -160,11 +160,11 @@ Hooks.on("renderWallConfig", (app, html, data) => {
         <legend>${moduleLabel}</legend>
             <div class="form-group">
                 <label>${topLabel}</label>
-                <input name="flags.${MODULE_SCOPE}.${TOP_KEY}" type="text" data-dtype="Number" value="${top}">
+                <input name="flags.${MODULE_SCOPE}.${TOP_KEY}" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
             </div>
             <div class="form-group">
                 <label>${bottomLabel}</label>
-                <input name="flags.${MODULE_SCOPE}.${BOTTOM_KEY}" type="text" data-dtype="Number" value="${bottom}">
+                <input name="flags.${MODULE_SCOPE}.${BOTTOM_KEY}" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
             </div>
         </legend>
     </fieldset>
@@ -194,19 +194,19 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     app.setPosition({ height: "auto" });
 
     if(WallHeight.isLevels) return
-    const bottom = app.object.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.flags?.levels?.rangeBottom;
+    const top = app.object.flags?.levels?.rangeTop;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeTop" type="text" data-dtype="Number" value="${top}">
+            <input name="flags.levels.rangeTop" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
     <div class="form-group">
         <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+            <input name="flags.levels.rangeBottom" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
         </div>
     </div>
     `
@@ -236,19 +236,19 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
     app.setPosition({ height: "auto" });
     if(WallHeight.isLevels) return
-    const bottom = app.object.flags?.levels?.rangeBottom ?? -Infinity;
-    const top = app.object.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = app.object.flags?.levels?.rangeBottom;
+    const top = app.object.flags?.levels?.rangeTop;
     const elevationHtml = `
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeTop" type="text" data-dtype="Number" value="${top}">
+            <input name="flags.levels.rangeTop" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
     <div class="form-group">
         <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="text" data-dtype="Number" value="${bottom}">
+            <input name="flags.levels.rangeBottom" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
         </div>
     </div>
     `
