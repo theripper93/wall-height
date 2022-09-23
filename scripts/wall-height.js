@@ -150,11 +150,12 @@ function registerSettings() {
 Hooks.on("renderWallConfig", (app, html, data) => {
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(!advancedVision) return;
-    const { top, bottom } = getWallBounds(app.object);
+    let { top, bottom } = getWallBounds(app.object);
+    top = parseFloat(top);
+    bottom = parseFloat(bottom);
     const topLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightTopLabel`);
     const bottomLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightBottomLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
-
     html.find(`select[name="ds"]`).closest(".form-group").after(`
     <fieldset>
         <legend>${moduleLabel}</legend>
