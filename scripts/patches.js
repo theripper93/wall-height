@@ -225,6 +225,12 @@ class WallHeightUtils{
 export function registerWrappers() {
   globalThis.WallHeight = new WallHeightUtils();
 
+  Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
+    get: function () {
+      return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
+    }
+  });
+
   function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
 
