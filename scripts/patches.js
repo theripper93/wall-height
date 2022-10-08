@@ -329,7 +329,11 @@ export function registerWrappers() {
   function drawWallRange(wrapped, ...args){
     const { advancedVision } = getSceneSettings(canvas.scene);
     const bounds = getWallBounds(this);
-    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) return wrapped(...args);
+    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
+      this.children = this.children.filter(c => c.name !== "wall-height-text");
+      return wrapped(...args);
+
+    }
     wrapped(...args);
     const style = CONFIG.canvasTextStyle.clone();
     style.fontSize /= 1.5;
@@ -370,6 +374,12 @@ export function registerWrappers() {
   Hooks.on("canvasReady", () => {
     WallHeight.updateCurrentTokenElevation();
   });
+
+  Hooks.on("updateWall", (wall, updates) => {
+    if(updates.flags && updates.flags[MODULE_ID]) {
+      WallHeight.schedulePerceptionUpdate();
+    }
+  })
 
   libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
