@@ -161,11 +161,11 @@ Hooks.on("renderWallConfig", (app, html, data) => {
         <legend>${moduleLabel}</legend>
             <div class="form-group">
                 <label>${topLabel}</label>
-                <input name="flags.${MODULE_SCOPE}.${TOP_KEY}" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
+                <input name="flags.${MODULE_SCOPE}.${TOP_KEY}" type="number" step="any" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
             </div>
             <div class="form-group">
                 <label>${bottomLabel}</label>
-                <input name="flags.${MODULE_SCOPE}.${BOTTOM_KEY}" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
+                <input name="flags.${MODULE_SCOPE}.${BOTTOM_KEY}" type="number" step="any" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
             </div>
         </legend>
     </fieldset>
@@ -201,13 +201,13 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeTop" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
+            <input name="flags.levels.rangeTop" type="number" step="any" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
     <div class="form-group">
         <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
+            <input name="flags.levels.rangeBottom" type="number" step="any" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
         </div>
     </div>
     `
@@ -243,13 +243,13 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     <div class="form-group">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeTop" type="number" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
+            <input name="flags.levels.rangeTop" type="number" step="any" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
     <div class="form-group">
         <label>${rangeBottom} <span class="units">(${distance})</span></label>
         <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="number" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
+            <input name="flags.levels.rangeBottom" type="number" step="any" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
         </div>
     </div>
     `
