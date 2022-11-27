@@ -390,4 +390,14 @@ export function registerWrappers() {
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 
   libWrapper.register(MODULE_ID, "Wall.prototype.refresh", drawWallRange, "WRAPPER");
+
+  libWrapper.register(
+    MODULE_ID,
+    "VisionSource.prototype.elevation",
+    function () {
+        return this.object.losHeight;
+    },
+    libWrapper.OVERRIDE,
+    { perf_mode: libWrapper.PERF_FAST }
+);
 }
