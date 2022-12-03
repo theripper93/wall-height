@@ -395,9 +395,21 @@ export function registerWrappers() {
     MODULE_ID,
     "VisionSource.prototype.elevation",
     function () {
-        return this.object.losHeight;
+        return this.object?.losHeight ?? canvas.primary.background.elevation;
     },
     libWrapper.OVERRIDE,
     { perf_mode: libWrapper.PERF_FAST }
-);
+  );
+
+  libWrapper.register(
+    MODULE_ID,
+    "LightSource.prototype.elevation",
+    function () {
+        return this.object instanceof Token
+          ? this.object.losHeight
+          : this.object?.document?.elevation ?? canvas.primary.background.elevation;
+    },
+    libWrapper.OVERRIDE,
+    { perf_mode: libWrapper.PERF_FAST }
+  );
 }
