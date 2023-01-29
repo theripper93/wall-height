@@ -61,7 +61,7 @@ class WallHeightUtils{
   }
 
   updateCurrentTokenElevation() {
-    const token = canvas.tokens.controlled.find(t => t.document.sight.enabled);//canvas.tokens.controlled[0];
+    const token = canvas.tokens.controlled.find(t => t.document.sight.enabled) ?? canvas.tokens.controlled[0];
     if (!token && game.user.isGM) {
       this.currentTokenElevation = null;
       this._token = null;
