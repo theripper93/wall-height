@@ -281,11 +281,12 @@ export function registerWrappers() {
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
-    //const isUI = WallHeight.isLevels && CONFIG.Levels?.UI?.rangeEnabled
+    const isUI = CONFIG.Levels?.UI?.rangeEnabled && !canvas?.tokens?.controlled[0];
     const elevation = WallHeight.currentTokenElevation//isUI && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.document?.elevation;
     if (elevation == null || !advancedVision) return wrapped(...args);
-    const { top, bottom } = getWallBounds(wall);
-    const inRange = elevation >= bottom && elevation <= top;
+    const {top, bottom} = getWallBounds(wall);
+    let inRange = elevation >= bottom && elevation <= top;
+    if (isUI) inRange = elevation >= bottom && elevation < top;
     //if (elevation < bottom || elevation > top) return false;
     return wrapped(...args) && inRange;
   }
