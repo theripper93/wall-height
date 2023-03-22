@@ -306,6 +306,7 @@ Handlebars.registerHelper('if_null', function(a, opts) {
 // First time message
 
 Hooks.once("ready", () => {
+    if(game.modules.get("levels-3d-preview")?.active) return;
     // Module title
     const MODULE_TITLE = game.modules.get(MODULE_ID).title;
   
