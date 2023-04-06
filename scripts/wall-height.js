@@ -136,14 +136,14 @@ function registerSettings() {
         scope: 'world',
         config: true,
         type: Boolean,
-        default: true
+        default: false
     });
     
     game.settings.register(MODULE_ID, 'migrateTokenHeight', {
         scope: 'world',
         config: false,
         type: Boolean,
-        default: true
+        default: false
     });
 }
 
