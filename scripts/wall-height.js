@@ -156,7 +156,7 @@ Hooks.on("renderWallConfig", (app, html, data) => {
     const topLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightTopLabel`);
     const bottomLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightBottomLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
-    html.find(`select[name="ds"]`).closest(".form-group").after(`
+    html.find(`.door-options`).after(`
     <fieldset>
         <legend>${moduleLabel}</legend>
             <div class="form-group">

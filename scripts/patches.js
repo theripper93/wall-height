@@ -49,7 +49,7 @@ class WallHeightUtils{
   schedulePerceptionUpdate(){
     if (!canvas.ready) return;
     canvas.perception.update({
-      forceUpdateFog: true,
+
       initializeLighting: true,
       initializeSounds: true,
       initializeVision: true,
@@ -255,7 +255,6 @@ export function registerWrappers() {
       || canvas.effects.lightSources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
       canvas.perception.update({
-        forceUpdateFog: true,
         initializeLighting: true,
         initializeSounds: true,
         initializeVision: true,
@@ -327,7 +326,12 @@ export function registerWrappers() {
     return wrapped(origin, config, ...args);
   }
 
-  function drawWallRange(wrapped, ...args){
+  function pointSourceInitialize(wrapped, ...args) {
+    if(this.object) args[0].elevation = this.object.losHeight ?? this.object.document.elevation;
+    return wrapped(...args);
+  }
+
+  function drawWallRange(wrapped, ...args) {
     const { advancedVision } = getSceneSettings(canvas.scene);
     const bounds = getWallBounds(this);
     if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
@@ -338,7 +342,6 @@ export function registerWrappers() {
     wrapped(...args);
     const style = CONFIG.canvasTextStyle.clone();
     style.fontSize /= 1.5;
-    style.fill = this._getWallColor();
     if(bounds.top == Infinity) bounds.top = "Inf";
     if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
     const range = `${bounds.top} / ${bounds.bottom}`;
@@ -380,7 +383,12 @@ export function registerWrappers() {
     if(updates.flags && updates.flags[MODULE_ID]) {
       WallHeight.schedulePerceptionUpdate();
     }
+    if(canvas.walls.active) wall.object.refresh();
   })
+
+  Hooks.on("activateWallsLayer", () => {
+    canvas.walls.placeables.forEach(w => w.refresh());
+  });
 
   libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
@@ -389,6 +397,8 @@ export function registerWrappers() {
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
+
+  libWrapper.register(MODULE_ID, "RenderedPointSource.prototype._initialize", pointSourceInitialize, "WRAPPER");
 
   libWrapper.register(MODULE_ID, "Wall.prototype.refresh", drawWallRange, "WRAPPER");
 
