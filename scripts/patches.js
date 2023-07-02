@@ -320,8 +320,8 @@ export function registerWrappers() {
       }
     }
     if(object){
-      object.b = origin.b ?? bottom;
-      object.t = origin.t ?? top;
+      object.b = origin.b ?? config.b ?? bottom;
+      object.t = origin.t ?? config.t ?? top;
     }
     return wrapped(origin, config, ...args);
   }
