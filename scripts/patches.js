@@ -334,27 +334,29 @@ export function registerWrappers() {
   function drawWallRange(wrapped, ...args) {
     const { advancedVision } = getSceneSettings(canvas.scene);
     const bounds = getWallBounds(this);
-    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
-      this.children = this.children.filter(c => c.name !== "wall-height-text");
+    if(!this.line && !WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
+      if(this.line) this.line.children = this.line.children.filter(c => c.name !== "wall-height-text");
       return wrapped(...args);
 
     }
     wrapped(...args);
     const style = CONFIG.canvasTextStyle.clone();
     style.fontSize /= 1.5;
+    style.fill = this._getWallColor();
     if(bounds.top == Infinity) bounds.top = "Inf";
     if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
     const range = `${bounds.top} / ${bounds.bottom}`;
-    const oldText = this.children.find(c => c.name === "wall-height-text");
+    const oldText = this.line.children.find(c => c.name === "wall-height-text");
     const text = oldText ?? new PreciseText(range, style);
     text.text = range;
     text.name = "wall-height-text";
+    text.interactiveChildren = false;
     let angle = (Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI ));
     angle = (angle+90)%180 - 90;
     text.position.set(this.center.x, this.center.y);
     text.anchor.set(0.5, 0.5);
     text.angle = angle;
-    if(!oldText) this.addChild(text);
+    if(!oldText) this.line.addChild(text)//this.addChild(text);
   }
 
   Hooks.on("updateToken", () => {
