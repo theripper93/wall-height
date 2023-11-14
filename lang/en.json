@@ -28,6 +28,8 @@
         "settings.autoLOSHeight.name": "Automatic Token Height",
         "settings.autoLOSHeight.hint": "Calculate token height automatically via token size and scale.\nToken height will be calculated for any token without a custom height value or with a custom height set to 0. Default token height will be ignored.",
         "settings.defaultLosHeight.name": "Default Token Height",
-        "settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6."
+        "settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6.",
+        "settings.losHeightMulti.name": "Token Height Multiplier",
+        "settings.losHeightMulti.hint": "Multiplier for token height. Multiplies the automatic token height by this value."
     }
 }

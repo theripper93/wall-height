@@ -121,6 +121,23 @@ function registerSettings() {
         },
     });
 
+    game.settings.register(MODULE_ID, "losHeightMulti", {
+        name: game.i18n.localize(`${MODULE_SCOPE}.settings.losHeightMulti.name`),
+        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.losHeightMulti.hint`),
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 0.89,
+        range: {
+            min: 0.1,
+            max: 2,
+            step: 0.01,
+        },
+        onChange: () => {
+            WallHeight.cacheSettings();
+        },
+    });
+
     game.settings.register(MODULE_ID, 'globalAdvancedLighting', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.name`),
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.globalAdvancedLighting.hint`),

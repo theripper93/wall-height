@@ -6,7 +6,7 @@ export function getTokenLOSheight(token) {
   if (WallHeight._autoLosHeight) {
     losDiff =
       token.document.flags[MODULE_SCOPE]?.tokenHeight ||
-      canvas.scene.dimensions.distance *
+      WallHeight._losHeightMulti * canvas.scene.dimensions.distance *
         Math.max(token.document.width, token.document.height) *
         ((Math.abs(token.document.texture.scaleX) + Math.abs(token.document.texture.scaleY)) / 2);
   } else {

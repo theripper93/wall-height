@@ -10,6 +10,7 @@ class WallHeightUtils{
     this._isLevelsAutoCover = game.modules.get("levelsautocover")?.active ?? false;
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
+    this._losHeightMulti = 0.89;
   }
 
   cacheSettings(){
@@ -17,6 +18,7 @@ class WallHeightUtils{
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
     this._enableWallText = game.settings.get(MODULE_ID, "enableWallText");
+    this._losHeightMulti = game.settings.get(MODULE_ID, "losHeightMulti");
     this.schedulePerceptionUpdate();
   }
 
