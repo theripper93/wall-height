@@ -280,7 +280,6 @@ export function registerWrappers() {
   } 
 
   function isDoorVisible(wrapped, ...args) {
-    debugger;
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
     const isUI = CONFIG.Levels?.UI?.rangeEnabled && !canvas?.tokens?.controlled[0];
