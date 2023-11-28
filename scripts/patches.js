@@ -280,10 +280,11 @@ export function registerWrappers() {
   } 
 
   function isDoorVisible(wrapped, ...args) {
+    debugger;
     const wall = this.wall;
     const { advancedVision } = getSceneSettings(wall.scene);
     const isUI = CONFIG.Levels?.UI?.rangeEnabled && !canvas?.tokens?.controlled[0];
-    const elevation = WallHeight.currentTokenElevation//isUI && !canvas.tokens.controlled[0] ? WallHeight.currentTokenElevation : WallHeight._token?.document?.elevation;
+    const elevation = WallHeight.currentTokenElevation ?? (isUI ?  CONFIG.Levels?.UI?.currentRange?.bottom ?? null : null)
     if (elevation == null || !advancedVision) return wrapped(...args);
     const {top, bottom} = getWallBounds(wall);
     let inRange = elevation >= bottom && elevation <= top;
