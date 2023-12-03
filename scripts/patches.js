@@ -246,25 +246,16 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(token.scene);
     const losHeight = token.losHeight;
     const sourceId = token.sourceId;
-    if (!advancedVision) {
-      if (canvas.effects.visionSources.has(sourceId)) {
-        token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
-      }
-      if (canvas.effects.lightSources.has(sourceId)) {
-        token.light.los.origin.b = token.light.los.origin.t = losHeight;
-      }
-    } else if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
+    if (canvas.effects.visionSources.has(sourceId)) {
+      token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
+    }
+    if (canvas.effects.lightSources.has(sourceId)) {
+      token.light.los.origin.b = token.light.los.origin.t = losHeight;
+    }
+    if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
       || canvas.effects.lightSources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
-      canvas.perception.update({
-        initializeLighting: true,
-        initializeSounds: true,
-        initializeVision: true,
-        refreshLighting: true,
-        refreshSounds: true,
-        refreshTiles: true,
-        refreshVision: true,
-      }, true);
+      WallHeight.schedulePerceptionUpdate();
     }
   }
 
