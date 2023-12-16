@@ -250,10 +250,10 @@ export function registerWrappers() {
       token.vision.los.origin.b = token.vision.los.origin.t = losHeight;
     }
     if (canvas.effects.lightSources.has(sourceId)) {
-      token.light.los.origin.b = token.light.los.origin.t = losHeight;
+      token.light.shape.origin.b = token.light.shape.origin.t = losHeight;
     }
     if (canvas.effects.visionSources.has(sourceId) && (token.vision.los.origin.b !== losHeight || token.vision.los.origin.t !== losHeight)
-      || canvas.effects.lightSources.has(sourceId) && (token.light.los.origin.b !== losHeight || token.light.los.origin.t !== losHeight)) {
+      || canvas.effects.lightSources.has(sourceId) && (token.light.shape.origin.b !== losHeight || token.light.shape.origin.t !== losHeight)) {
       token.updateSource({ defer: true });
       WallHeight.schedulePerceptionUpdate();
     }
