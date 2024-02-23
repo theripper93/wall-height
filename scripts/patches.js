@@ -327,7 +327,7 @@ export function registerWrappers() {
   function drawWallRange(wrapped, ...args) {
     const { advancedVision } = getSceneSettings(canvas.scene);
     const bounds = getWallBounds(this);
-    if(!this.line && !WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
+    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
       if(this.line) this.line.children = this.line.children.filter(c => c.name !== "wall-height-text");
       return wrapped(...args);
 
