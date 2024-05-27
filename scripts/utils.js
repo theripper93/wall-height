@@ -28,8 +28,8 @@ export function getWallBounds(wall) {
 }
 
 export function getLevelsBounds(document){
-    const top = document.flags?.levels?.rangeTop ?? Infinity;
-    const bottom = document.flags?.levels?.rangeBottom ?? -Infinity;
+    const top = document.flags?.levels?.rangeTop ?? document.elevation ?? Infinity;
+    const bottom = document.elevation ?? -Infinity;
     return { top, bottom }
 }
 

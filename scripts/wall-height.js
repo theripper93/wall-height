@@ -167,13 +167,13 @@ function registerSettings() {
 Hooks.on("renderWallConfig", (app, html, data) => {
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(!advancedVision) return;
-    let { top, bottom } = getWallBounds(app.object);
+    let { top, bottom } = getWallBounds(app.document);
     top = parseFloat(top);
     bottom = parseFloat(bottom);
     const topLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightTopLabel`);
     const bottomLabel = game.i18n.localize(`${MODULE_SCOPE}.WallHeightBottomLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
-    html.find(`.door-options`).after(`
+    html[0].querySelector(`.door-options`).insertAdjacentHTML("afterend", `
     <fieldset>
         <legend>${moduleLabel}</legend>
             <div class="form-group">
@@ -196,9 +196,8 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     const label = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingLabel`);
     const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
-    const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
-    const distance = (app.object.parent?.grid.units ?? game.system.grid.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
-    const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
+    const distance = (app.document.parent?.grid.units ?? game.system.grid.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
+    const checked = app.document.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
     const hint = globalAdvancedLighting ? warnEnabledGlobally : ""
@@ -208,27 +207,20 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     ${hint}
     <p class="hint">${notes}</p>
     </div>`
-    html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
+    html.querySelector(`input[name="walls"]`).closest(".form-group").insertAdjacentHTML("afterend", _injectHTML);
     app.setPosition({ height: "auto" });
 
     if(WallHeight.isLevels) return
-    const bottom = app.object.flags?.levels?.rangeBottom;
-    const top = app.object.flags?.levels?.rangeTop;
+    const top = app.document.flags?.levels?.rangeTop;
     const elevationHtml = `
-    <div class="form-group">
+    <div class="form-group slim">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeTop" type="number" step="any" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
-    <div class="form-group">
-        <label>${rangeBottom} <span class="units">(${distance})</span></label>
-        <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="number" step="any" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
-        </div>
-    </div>
     `
-    html.find(`input[name="config.dim"]`).closest(".form-group").after(elevationHtml);
+    html.querySelector(`input[name="x"]`).closest(".form-group").insertAdjacentHTML("afterend", elevationHtml);
     app.setPosition({ height: "auto" });
 
 })
@@ -238,9 +230,8 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     if(!advancedVision) return;
     const label = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingLabel`);
     const notes = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingNotes`);
-    const checked = app.object.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
+    const checked = app.document.getFlag(MODULE_SCOPE, "advancedLighting") ? "checked" : "";
     const rangeTop = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeTop`);
-    const rangeBottom = game.i18n.localize(`${MODULE_SCOPE}.levelsRangeBottom`);
     const distance = (canvas.scene.grid.units ?? game.system?.grid?.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
     const globalAdvancedLighting = game.settings.get(MODULE_ID, 'globalAdvancedLighting');
     const warnEnabledGlobally = `<p class="hint" style="color: red;">${game.i18n.localize(`${MODULE_SCOPE}.ALGlobal`)}</p>`;
@@ -251,33 +242,26 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     ${hint}
     <p class="hint">${notes}</p>
     </div>`
-    html.find(`input[name="walls"]`).closest(".form-group").after(_injectHTML);
+    html.querySelector(`input[name="walls"]`).closest(".form-group").insertAdjacentHTML("afterend", _injectHTML);
     app.setPosition({ height: "auto" });
     if(WallHeight.isLevels) return
-    const bottom = app.object.flags?.levels?.rangeBottom;
-    const top = app.object.flags?.levels?.rangeTop;
+    const top = app.document.flags?.levels?.rangeTop;
     const elevationHtml = `
-    <div class="form-group">
+    <div class="form-group slim">
         <label>${rangeTop} <span class="units">(${distance})</span></label>
         <div class="form-fields">
             <input name="flags.levels.rangeTop" type="number" step="any" value="${Number.isFinite(top) ? top : ""}" placeholder="Infinity">
         </div>
     </div>
-    <div class="form-group">
-        <label>${rangeBottom} <span class="units">(${distance})</span></label>
-        <div class="form-fields">
-            <input name="flags.levels.rangeBottom" type="number" step="any" value="${Number.isFinite(bottom) ? bottom : ""}" placeholder="-Infinity">
-        </div>
-    </div>
     `
-    html.find(`input[name="radius"]`).closest(".form-group").after(elevationHtml);
+    html.querySelector(`input[name="radius"]`).closest(".form-group").insertAdjacentHTML("afterend", elevationHtml);
     app.setPosition({ height: "auto" });
 })
 
 Hooks.on("renderTokenConfig", (app, html, data) => {
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
-    const losHeight = app.object?.object?.losHeight ?? 0;
+    const losHeight = app.document?.object?.losHeight ?? 0;
     const height = losHeight - app.token.elevation;
     const hint = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightHint`).replace("{{height}}", height).replace("{{losHeight}}", losHeight);
     const distance = (canvas.scene.grid.units ?? game.system?.grid?.units) || game.i18n.localize(`${MODULE_SCOPE}.distance`);
@@ -287,7 +271,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
               <div class="form-fields">
               <input type="number" step="any" name="flags.${MODULE_SCOPE}.tokenHeight" placeholder="units" value="${tokenHeight}">
               </div>
-              ${app.object?.object?.losHeight ? `<p class="hint">${hint}</p>` : ""}         
+              ${app.document?.object?.losHeight ? `<p class="hint">${hint}</p>` : ""}         
             </div>
   `;
     html.find('input[name="lockRotation"]').closest(".form-group").before(newHtml);
@@ -295,7 +279,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
   });
 
 Hooks.on("renderSceneConfig", (app, html, data) => {
-    const {advancedVision} = getSceneSettings(app.object);
+    const {advancedVision} = getSceneSettings(app.document);
     const enableVisionKeyLabel = game.i18n.localize(`${MODULE_SCOPE}.AdvancedVisionLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
     html.find(`input[name="globalLightThreshold"]`).closest(".form-group").after(`

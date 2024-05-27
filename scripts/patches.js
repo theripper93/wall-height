@@ -80,7 +80,7 @@ class WallHeightUtils{
 
   getSourceElevationTop(document) {
     if (document instanceof TokenDocument) return document.object.losHeight
-    return document.document.flags?.levels?.rangeTop ?? +Infinity;
+    return document.document.flags?.levels?.rangeTop ?? document.document.elevation ?? +Infinity;
   }
 
   async setSourceElevationBottom(document, value) {
@@ -89,8 +89,7 @@ class WallHeightUtils{
   }
 
   getSourceElevationBottom(document) {
-    if (document instanceof TokenDocument) return document.document.elevation;
-    return document.document.flags?.levels?.rangeBottom ?? -Infinity;
+    return document.document.elevation;
   }
 
   async setSourceElevationBounds(document, bottom, top) {
@@ -227,14 +226,6 @@ class WallHeightUtils{
 export function registerWrappers() {
   globalThis.WallHeight = new WallHeightUtils();
 
-  if(!globalThis.WallHeight.isLevels){
-    Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
-      get: function () {
-        return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
-      }
-    });
-  }
-
 
   function tokenOnUpdate(wrapped, ...args) {
     wrapped(...args);
@@ -243,7 +234,6 @@ export function registerWrappers() {
   }
 
   function updateTokenSourceBounds(token) {
-    const { advancedVision } = getSceneSettings(token.scene);
     const losHeight = token.losHeight;
     const sourceId = token.sourceId;
     if (canvas.effects.visionSources.has(sourceId)) {
@@ -260,9 +250,10 @@ export function registerWrappers() {
   }
 
   function testWallInclusion(wrapped, ...args) {
+    const wall = args[0].object;
+    if (!wall) return wrapped(...args);
     if (!wrapped(...args)) return false;
-    const wall = args[0]
-    const { advancedVision } = getSceneSettings(wall.scene);
+    const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return true;
     const { top, bottom } = getWallBounds(wall);
     const b = this.config?.source?.object?.b ?? this.origin?.object?.b ?? -Infinity;
@@ -319,9 +310,10 @@ export function registerWrappers() {
     return wrapped(origin, config, ...args);
   }
 
-  function pointSourceInitialize(wrapped, ...args) {
-    if(this.object) args[0].elevation = this.object.losHeight ?? this.object.document.elevation;
-    return wrapped(...args);
+  function _getVisionSourceData(wrapped, ...args) {
+    const data = wrapped(...args);
+    data.elevation = this.object?.losHeight ?? this.object?.document?.elevation;
+    return data;
   }
 
   function drawWallRange(wrapped, ...args) {
@@ -389,33 +381,14 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testWallInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testEdgeInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "RenderedPointSource.prototype._initialize", pointSourceInitialize, "WRAPPER");
+  libWrapper.register(MODULE_ID, "Token.prototype._getVisionSourceData", _getVisionSourceData, "WRAPPER");
+
+  libWrapper.register(MODULE_ID, "Token.prototype._getLightSourceData", _getVisionSourceData, "WRAPPER");
 
   libWrapper.register(MODULE_ID, "Wall.prototype.refresh", drawWallRange, "WRAPPER");
 
-  libWrapper.register(
-    MODULE_ID,
-    "VisionSource.prototype.elevation",
-    function () {
-        return this.object?.losHeight ?? canvas.primary.background.elevation;
-    },
-    libWrapper.OVERRIDE,
-    { perf_mode: libWrapper.PERF_FAST }
-  );
-
-  libWrapper.register(
-    MODULE_ID,
-    "LightSource.prototype.elevation",
-    function () {
-        return this.object instanceof Token
-          ? this.object.losHeight
-          : this.object?.document?.elevation ?? canvas.primary.background.elevation;
-    },
-    libWrapper.OVERRIDE,
-    { perf_mode: libWrapper.PERF_FAST }
-  );
 }
