@@ -57,7 +57,7 @@ class WallHeightUtils{
       initializeVision: true,
       refreshLighting: true,
       refreshSounds: true,
-      refreshTiles: true,
+      refreshOcclusion: true,
       refreshVision: true,
     }, true);
   }

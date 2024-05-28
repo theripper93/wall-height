@@ -285,7 +285,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
     const {advancedVision} = getSceneSettings(app.document);
     const enableVisionKeyLabel = game.i18n.localize(`${MODULE_SCOPE}.AdvancedVisionLabel`);
     const moduleLabel = game.i18n.localize(`${MODULE_SCOPE}.ModuleLabel`);
-    html.querySelector(`input[name="globalLightThreshold"]`).closest(".form-group").insertAdjacentHTML("afterend", `
+    html.querySelector(`input[name="environment.globalLight.enabled"]`).closest(".form-group").insertAdjacentHTML("afterend", `
     <fieldset>
     <legend>${moduleLabel}</legend>
         <div class="form-group">
