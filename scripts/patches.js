@@ -81,7 +81,9 @@ class WallHeightUtils{
         mesh.visible = true;
         continue;
       }
-      const {top, bottom} = mesh.region.document.elevation;
+      
+      const top = mesh.region.document.elevation.top ?? Infinity;
+      const bottom = mesh.region.document.elevation.bottom ?? -Infinity;
       mesh.visible = currentLos >= bottom && currentLos <= top;
     }
     canvas.effects.illumination.invalidateDarknessLevelContainer(true);
