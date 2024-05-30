@@ -11,6 +11,7 @@ class WallHeightUtils{
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
     this._losHeightMulti = 0.89;
+    this.reinitializeLightSources = foundry.utils.debounce(this.reinitializeLightSources.bind(this), 1);
   }
 
   cacheSettings(){
@@ -48,11 +49,12 @@ class WallHeightUtils{
     return this._currentTokenElevation;
   }
 
-  schedulePerceptionUpdate(){
+  schedulePerceptionUpdate(reinitializeLightSources = true) {
     if (!canvas.ready) return;
+    if(reinitializeLightSources) this.reinitializeLightSources();
     canvas.perception.update({
 
-      initializeLighting: true,
+      initializeLightSources: true,
       initializeSounds: true,
       initializeVision: true,
       refreshLighting: true,
@@ -60,6 +62,12 @@ class WallHeightUtils{
       refreshOcclusion: true,
       refreshVision: true,
     }, true);
+  }
+
+  //Revisit if performance issues
+  reinitializeLightSources() {
+    canvas.lighting.placeables.forEach(l => l.initializeLightSource());
+    canvas.tokens.placeables.forEach(t => t.initializeLightSource());
   }
 
   updateCurrentTokenElevation() {
@@ -368,7 +376,7 @@ export function registerWrappers() {
 
   Hooks.on("updateWall", (wall, updates) => {
     if(updates.flags && updates.flags[MODULE_ID]) {
-      WallHeight.schedulePerceptionUpdate();
+      WallHeight.schedulePerceptionUpdate(false);
     }
     if(canvas.walls.active) wall.object.refresh();
   })
