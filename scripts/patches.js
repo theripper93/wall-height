@@ -68,6 +68,23 @@ class WallHeightUtils{
   reinitializeLightSources() {
     canvas.lighting.placeables.forEach(l => l.initializeLightSource());
     canvas.tokens.placeables.forEach(t => t.initializeLightSource());
+    this.processRegions();
+  }
+
+  processRegions() {
+    const regionMeshes = canvas.effects.illumination.darknessLevelMeshes.children.concat(canvas.visibility.vision.light.global.meshes.children);
+
+    for (const mesh of regionMeshes) {
+      if (!(mesh instanceof foundry.canvas.regions.RegionMesh)) continue;
+      const currentLos = WallHeight.currentTokenElevation;
+      if (currentLos == null) {
+        mesh.visible = true;
+        continue;
+      }
+      const {top, bottom} = mesh.region.document.elevation;
+      mesh.visible = currentLos >= bottom && currentLos <= top;
+    }
+    canvas.effects.illumination.invalidateDarknessLevelContainer(true);
   }
 
   updateCurrentTokenElevation() {
