@@ -281,13 +281,16 @@ export function registerWrappers() {
 
   function testWallInclusion(wrapped, ...args) {
     const wall = args[0].object;
-    if (!wall) return wrapped(...args);
-    if (!wrapped(...args)) return false;
+    const result = wrapped(...args);
+    if (!wall || !result) return result;
     const { advancedVision } = getSceneSettings(canvas.scene);
-    if (!advancedVision) return true;
+    if (!advancedVision) return result;
     const {top, bottom} = getWallBounds(wall);
     const object = this.config?.source?.object ?? this.origin?.object ?? this.object;
-    if(!object) return true;
+    if (!object) {
+      console.warn(`Wall Height: Ignoring Wall Height for this test\n\nNo source found in ${this.constructor.name}#config, the system or module performing the check has not provided an object to test against. Please make sure to include a source in the configuration object of your PointVisionSource`);
+      return result;
+    }
     const b = object?.b ?? -Infinity;
     const t = object?.t ?? +Infinity;
     return b >= bottom && t <= top;
