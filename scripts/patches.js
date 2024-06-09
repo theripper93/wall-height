@@ -23,6 +23,10 @@ class WallHeightUtils{
     this.schedulePerceptionUpdate();
   }
 
+  get currentToken() {
+    return this._token;
+  }
+
   get tokenElevation(){
     return this._token?.document?.elevation ?? this.currentTokenElevation
   }
@@ -111,8 +115,7 @@ class WallHeightUtils{
   }
 
   async setSourceElevationBottom(document, value) {
-    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
-    return await document.update({ "flags.levels.rangeBottom": value });
+    return document.update({ "elevation": bottom });
   }
 
   getSourceElevationBottom(document) {
@@ -282,9 +285,11 @@ export function registerWrappers() {
     if (!wrapped(...args)) return false;
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return true;
-    const { top, bottom } = getWallBounds(wall);
-    const b = this.config?.source?.object?.b ?? this.origin?.object?.b ?? -Infinity;
-    const t = this.config?.source?.object?.t ?? this.origin?.object?.t ?? +Infinity;
+    const {top, bottom} = getWallBounds(wall);
+    const object = this.config?.source?.object ?? this.origin?.object ?? this.object ?? WallHeight.currentToken;
+    if(!object) return true;
+    const b = object?.b ?? -Infinity;
+    const t = object?.t ?? +Infinity;
     return b >= bottom && t <= top;
   } 
 
@@ -339,7 +344,7 @@ export function registerWrappers() {
 
   function _getVisionSourceData(wrapped, ...args) {
     const data = wrapped(...args);
-    data.elevation = this.object?.losHeight ?? this.object?.document?.elevation;
+    data.elevation = this.losHeight ?? this.object?.losHeight ?? this.object?.document?.elevation ?? this.document?.elevation;
     return data;
   }
 
