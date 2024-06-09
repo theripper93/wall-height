@@ -286,7 +286,7 @@ export function registerWrappers() {
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return true;
     const {top, bottom} = getWallBounds(wall);
-    const object = this.config?.source?.object ?? this.origin?.object ?? this.object ?? WallHeight.currentToken;
+    const object = this.config?.source?.object ?? this.origin?.object ?? this.object;
     if(!object) return true;
     const b = object?.b ?? -Infinity;
     const t = object?.t ?? +Infinity;
