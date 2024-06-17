@@ -70,6 +70,7 @@ class WallHeightUtils{
 
   //Revisit if performance issues
   reinitializeLightSources() {
+    if(game.Levels3DPreview?._active) return;
     canvas.lighting.placeables.forEach(l => l.initializeLightSource());
     canvas.tokens.placeables.forEach(t => t.initializeLightSource());
     this.processRegions();
