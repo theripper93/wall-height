@@ -192,6 +192,7 @@ Hooks.on("renderWallConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
+    if(html.querySelector(`input[name="flags.${MODULE_SCOPE}.advancedLighting"]`)) return;
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(!advancedVision) return;
     const label = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingLabel`);
@@ -227,6 +228,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
 })
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
+    if(html.querySelector(`input[name="flags.${MODULE_SCOPE}.advancedLighting"]`)) return;
     const {advancedVision} = getSceneSettings(canvas.scene);
     if(!advancedVision) return;
     const label = game.i18n.localize(`${MODULE_SCOPE}.advancedLightingLabel`);
