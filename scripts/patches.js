@@ -290,7 +290,7 @@ export function registerWrappers() {
     const {top, bottom} = getWallBounds(wall);
     const object = this.config?.source?.object ?? this.origin?.object ?? this.object;
     if (!object) {
-      console.warn(`Wall Height: Ignoring Wall Height for this test\n\nNo source found in ${this.constructor.name}#config, the system or module performing the check has not provided an object to test against. Please make sure to include a source in the configuration object of your PointVisionSource`);
+      //console.warn(`Wall Height: Ignoring Wall Height for this test\n\nNo source found in ${this.constructor.name}#config, the system or module performing the check has not provided an object to test against. Please make sure to include a source in the configuration object of your PointVisionSource`);
       return result;
     }
     const b = object?.b ?? object?.elevation ?? -Infinity;
