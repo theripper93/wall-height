@@ -45,7 +45,8 @@ class WallHeightUtils{
       update = true;
     }
     if (update) {
-      this.schedulePerceptionUpdate();
+      this.processRegions();
+      //this.schedulePerceptionUpdate();
     }
   }
 
