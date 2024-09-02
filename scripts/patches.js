@@ -11,7 +11,7 @@ class WallHeightUtils{
     this._autoLosHeight = false;
     this._defaultTokenHeight = 6;
     this._losHeightMulti = 0.89;
-    this.reinitializeLightSources = foundry.utils.debounce(this.reinitializeLightSources.bind(this), 1);
+    this.reinitializeLightSources = foundry.utils.debounce(this.reinitializeLightSources.bind(this), 16);
   }
 
   cacheSettings(){
@@ -289,10 +289,7 @@ export function registerWrappers() {
     if (!advancedVision) return result;
     const {top, bottom} = getWallBounds(wall);
     const object = this.config?.source?.object ?? this.origin?.object ?? this.object;
-    if (!object) {
-      //console.warn(`Wall Height: Ignoring Wall Height for this test\n\nNo source found in ${this.constructor.name}#config, the system or module performing the check has not provided an object to test against. Please make sure to include a source in the configuration object of your PointVisionSource`);
-      return result;
-    }
+    if (!object) return result;
     const b = object?.b ?? object?.elevation ?? -Infinity;
     const t = object?.t ?? object?.elevation ?? +Infinity;
     return b >= bottom && t <= top;
