@@ -80,7 +80,6 @@ class WallHeightUtils{
   processRegions() {
     if(!canvas.visibility.vision) return;
     const regionMeshes = canvas.effects.illumination.darknessLevelMeshes.children.concat(canvas.visibility.vision.light.global.meshes.children);
-
     for (const mesh of regionMeshes) {
       if (!(mesh instanceof foundry.canvas.regions.RegionMesh)) continue;
       const currentLos = WallHeight.currentTokenElevation;
