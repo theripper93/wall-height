@@ -46,7 +46,7 @@ class WallHeightUtils{
     }
     if (update) {
       this.processRegions();
-      //this.schedulePerceptionUpdate();
+      this.schedulePerceptionUpdate();
     }
   }
 
@@ -281,7 +281,7 @@ export function registerWrappers() {
     }
   }
 
-  function testWallInclusion(wrapped, ...args) {
+  function _testEdgeInclusion(wrapped, ...args) {
     const wall = args[0].object;
     const result = wrapped(...args);
     if (!wall || !result) return result;
@@ -414,7 +414,7 @@ export function registerWrappers() {
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testEdgeInclusion", testWallInclusion, "WRAPPER", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testEdgeInclusion", _testEdgeInclusion, "WRAPPER", { perf_mode: "FAST" });
 
   libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 
