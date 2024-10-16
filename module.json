@@ -43,7 +43,6 @@
     }
   ],
   "styles": [
-    "styles/wall-height.css"
   ],
   "url": "https://github.com/theripper93/wall-height",
   "manifest": "https://github.com/theripper93/wall-height/releases/latest/download/module.json",

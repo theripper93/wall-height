@@ -17,7 +17,6 @@ class WallHeightUtils{
   cacheSettings(){
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
-    this._blockSightMovement = game.settings.get(MODULE_ID, "blockSightMovement");
     this._enableWallText = game.settings.get(MODULE_ID, "enableWallText");
     this._losHeightMulti = game.settings.get(MODULE_ID, "losHeightMulti");
     this.schedulePerceptionUpdate();
@@ -244,7 +243,7 @@ class WallHeightUtils{
   addBoundsToRays(rays, token) {
     if (token) {
       const bottom = token.document.elevation;
-      const top = WallHeight._blockSightMovement ? token.losHeight : token.document.elevation;
+      const top = token.losHeight;
       for (const ray of rays) {
         ray.A.b = bottom;
         ray.A.t = top;
@@ -318,7 +317,7 @@ export function registerWrappers() {
           bottom = top = object.losHeight;
         } else {
           bottom = object.document.elevation;
-          top = WallHeight._blockSightMovement ? object.losHeight : bottom;
+          top = object.losHeight;
         }
       } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
         if (getAdvancedLighting(object.document)) {

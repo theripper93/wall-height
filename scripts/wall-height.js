@@ -1,6 +1,5 @@
 import { registerWrappers } from "./patches.js";
 import { getWallBounds,getSceneSettings,migrateData,getTokenLOSheight } from "./utils.js";
-import { WallHeightToolTip } from './tooltip.js';
 import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY, ENABLE_ADVANCED_VISION_KEY, ENABLE_ADVANCED_MOVEMENT_KEY } from "./const.js";
 
 const MODULE_ID = 'wall-height';
@@ -14,14 +13,6 @@ Object.defineProperty(Token.prototype, "losHeight", {
 Hooks.once("init",()=>{
     registerWrappers();
     registerSettings();
-    if(game.settings.get(MODULE_ID,'enableTooltip')){
-        Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
-            canvas.hud.wallHeight?.close();
-            html.find("#wall-height-tooltip").remove();
-            html.append('<template id="wall-height-tooltip"></template>');
-            canvas.hud.wallHeight = new WallHeightToolTip();
-        });
-    }
     WallHeight.cacheSettings();
 });
 
@@ -34,44 +25,7 @@ Hooks.once("ready", ()=>{
     }
 })
 
-Hooks.on("hoverWall",(wall, hovered)=>{
-    if (!canvas.hud?.wallHeight || canvas.walls._chain) return;
-    const {advancedVision} = getSceneSettings(canvas.scene);
-    if(advancedVision!=null && !advancedVision)
-        return;
-    if (hovered) {
-        canvas.hud.wallHeight.bind(wall);
-    } else {
-        canvas.hud.wallHeight.clear();
-    }
-});
-
-Hooks.on("renderSceneControls", () => {
-    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
-  });
-
-Hooks.on("deleteWall", () => {
-    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
-});
-
-Hooks.on("createWall", () => {
-    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
-});
-
-Hooks.on("updateWall", () => {
-    if (canvas.hud?.wallHeight) canvas.hud.wallHeight.clear();
-});
-
 function registerSettings() {
-    game.settings.register(MODULE_ID, 'enableTooltip', {
-        name: game.i18n.localize(`${MODULE_SCOPE}.settings.enableTooltip.name`),
-        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.enableTooltip.hint`),
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        default: false
-    });
-
     game.settings.register(MODULE_ID, 'enableWallText', {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.enableWallText.name`),
         hint: game.i18n.localize(`${MODULE_SCOPE}.settings.enableWallText.hint`),
@@ -83,18 +37,6 @@ function registerSettings() {
             WallHeight.cacheSettings();
         },
     });
-
-    game.settings.register(MODULE_ID, "blockSightMovement", {
-        name: game.i18n.localize(`${MODULE_SCOPE}.settings.blockSightMovement.name`),
-        hint: game.i18n.localize(`${MODULE_SCOPE}.settings.blockSightMovement.hint`),
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: true,
-        onChange: () => {
-            WallHeight.cacheSettings();
-        },
-      });
 
     game.settings.register(MODULE_ID, "autoLOSHeight", {
         name: game.i18n.localize(`${MODULE_SCOPE}.settings.autoLOSHeight.name`),
