@@ -27,5 +27,7 @@ export function showWelcome() {
             blind: true,
             content: FALLBACK_MESSAGE,
         });
+
+        game.settings.set(MODULE_SCOPE, DONT_REMIND_AGAIN_KEY, true);
     }
 }
