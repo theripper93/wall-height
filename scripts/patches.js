@@ -106,12 +106,12 @@ class WallHeightUtils{
   }
 
   async setSourceElevationTop(document, value) {
-    if (document instanceof TokenDocument) return;
+    if (document instanceof foundry.canvas.placeables.TokenDocument) return;
     return await document.update({ "flags.levels.rangeTop": value });
   }
 
   getSourceElevationTop(document) {
-    if (document instanceof TokenDocument) return document.object.losHeight
+    if (document instanceof foundry.canvas.placeables.TokenDocument) return document.object.losHeight
     return document.document.flags?.levels?.rangeTop ?? document.document.elevation ?? +Infinity;
   }
 
@@ -124,12 +124,12 @@ class WallHeightUtils{
   }
 
   async setSourceElevationBounds(document, bottom, top) {
-    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
+    if (document instanceof foundry.canvas.placeables.TokenDocument) return await document.update({ "elevation": bottom });
     return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
   }
 
   getSourceElevationBounds(document) {
-    if (document instanceof TokenDocument) {
+    if (document instanceof foundry.canvas.placeables.TokenDocument) {
       const bottom = document.document.elevation;
       const top = document.object
         ? document.object.losHeight
@@ -140,12 +140,12 @@ class WallHeightUtils{
   }
 
   async setSourceElevationBounds(document, bottom, top) {
-    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
+    if (document instanceof foundry.canvas.placeables.TokenDocument) return await document.update({ "elevation": bottom });
     return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
   }
 
   getSourceElevationBounds(document) {
-    if (document instanceof TokenDocument) {
+    if (document instanceof foundry.canvas.placeables.TokenDocument) {
       const bottom = document.elevation;
       const top = document.object
       ? document.object.losHeight
@@ -312,14 +312,14 @@ export function registerWrappers() {
     let top = +Infinity;
     const object = config.source?.object ?? origin.object;
     if (origin.b == undefined && origin.t == undefined) {
-      if (object instanceof Token) {
+      if (object instanceof foundry.canvas.placeables.Token) {
         if (config.type !== "move") {
           bottom = top = object.losHeight;
         } else {
           bottom = object.document.elevation;
           top = object.losHeight;
         }
-      } else if (object instanceof AmbientLight || object instanceof AmbientSound) {
+      } else if (object instanceof foundry.canvas.placeables.AmbientLight || object instanceof foundry.canvas.placeables.AmbientSound) {
         if (getAdvancedLighting(object.document)) {
           const bounds = getLevelsBounds(object.document)//WallHeight.getElevation(object.document);
           bottom = bounds.bottom;
@@ -409,18 +409,18 @@ export function registerWrappers() {
     canvas.walls.placeables.forEach(w => w.refresh());
   });
 
-  libWrapper.register(MODULE_ID, "DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
   libWrapper.register(MODULE_ID, "CONFIG.Token.objectClass.prototype._onUpdate", tokenOnUpdate, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype._testEdgeInclusion", _testEdgeInclusion, "WRAPPER", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype._testEdgeInclusion", _testEdgeInclusion, "WRAPPER", { perf_mode: "FAST" });
 
-  libWrapper.register(MODULE_ID, "ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
+  libWrapper.register(MODULE_ID, "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype.initialize", setSourceElevation, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Token.prototype._getVisionSourceData", _getVisionSourceData, "WRAPPER");
+  libWrapper.register(MODULE_ID, "foundry.canvas.placeables.Token.prototype._getVisionSourceData", _getVisionSourceData, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Token.prototype._getLightSourceData", _getVisionSourceData, "WRAPPER");
+  libWrapper.register(MODULE_ID, "foundry.canvas.placeables.Token.prototype._getLightSourceData", _getVisionSourceData, "WRAPPER");
 
-  libWrapper.register(MODULE_ID, "Wall.prototype.refresh", drawWallRange, "WRAPPER");
+  libWrapper.register(MODULE_ID, "foundry.canvas.placeables.Wall.prototype.refresh", drawWallRange, "WRAPPER");
 
 }

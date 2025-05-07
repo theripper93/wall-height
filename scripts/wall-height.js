@@ -4,7 +4,7 @@ import { MODULE_SCOPE, TOP_KEY, BOTTOM_KEY, ENABLE_ADVANCED_VISION_KEY, ENABLE_A
 
 const MODULE_ID = "wall-height";
 
-Object.defineProperty(Token.prototype, "losHeight", {
+Object.defineProperty(foundry.canvas.placeables.Token.prototype, "losHeight", {
     get: function myProperty() {
         return getTokenLOSheight(this);
     },
