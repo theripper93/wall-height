@@ -364,7 +364,7 @@ export function registerWrappers() {
     if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
     const range = `${bounds.top} / ${bounds.bottom}`;
     const oldText = this.line.children.find(c => c.name === "wall-height-text");
-    const text = oldText ?? new PreciseText(range, style);
+    const text = oldText ?? new foundry.canvas.containers.PreciseText(range, style);
     text.text = range;
     text.name = "wall-height-text";
     text.interactiveChildren = false;
@@ -408,6 +408,18 @@ export function registerWrappers() {
   Hooks.on("activateWallsLayer", () => {
     canvas.walls.placeables.forEach(w => w.refresh());
   });
+
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.elevation", function(wrapped, ...args) {
+     const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
+     if(!Number.isFinite(bottom)) return wrapped(...args);
+     return bottom;
+    }, "MIXED", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.sort", function(){
+     const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
+      if(!Number.isFinite(bottom)) return wrapped(...args);
+     return Infinity 
+    }, "MIXED", { perf_mode: "FAST" });
+
 
   libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
 
