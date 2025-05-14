@@ -203,7 +203,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     app.setPosition({ height: "auto" });
 });
 
-Hooks.on("renderTokenConfig", (app, html, data) => {
+const renderTokenConfig = (app, html, data) => {
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
     const losHeight = app.document?.object?.losHeight ?? 0;
@@ -221,7 +221,10 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
   `;
     html.querySelector('[name="lockRotation"]').closest(".form-group").insertAdjacentHTML("afterend", newHtml);
     app.setPosition({ height: "auto" });
-});
+};
+
+Hooks.on("renderTokenConfig",  renderTokenConfig);
+Hooks.on("renderPrototypeTokenConfig",  renderTokenConfig);
 
 Hooks.on("renderSceneConfig", (app, html, data) => {
     const { advancedVision } = getSceneSettings(app.document);
