@@ -414,7 +414,7 @@ export function registerWrappers() {
      if(!Number.isFinite(bottom)) return wrapped(...args);
      return bottom;
     }, "MIXED", { perf_mode: "FAST" });
-  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.sort", function(){
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.sort", function(wrapped, ...args) {
      const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
       if(!Number.isFinite(bottom)) return wrapped(...args);
      return Infinity 
