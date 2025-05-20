@@ -1,9 +1,9 @@
-import { getWallBounds,getSceneSettings,migrateData,getLevelsBounds,getAdvancedLighting,migrateTokenHeight } from "./utils.js";
+import { getWallBounds, getSceneSettings, migrateData, getLevelsBounds, getAdvancedLighting, migrateTokenHeight } from "./utils.js";
 
 const MODULE_ID = "wall-height";
 
-class WallHeightUtils{
-  constructor(){
+class WallHeightUtils {
+  constructor() {
     this._advancedVision = null;
     this._currentTokenElevation = null;
     this.isLevels = game.modules.get("levels")?.active ?? false;
@@ -14,7 +14,7 @@ class WallHeightUtils{
     this.reinitializeLightSources = foundry.utils.debounce(this.reinitializeLightSources.bind(this), 16);
   }
 
-  cacheSettings(){
+  cacheSettings() {
     this._autoLosHeight = game.settings.get(MODULE_ID, 'autoLOSHeight');
     this._defaultTokenHeight = game.settings.get(MODULE_ID, 'defaultLosHeight');
     this._enableWallText = game.settings.get(MODULE_ID, "enableWallText");
@@ -26,7 +26,7 @@ class WallHeightUtils{
     return this._token;
   }
 
-  get tokenElevation(){
+  get tokenElevation() {
     return this._token?.document?.elevation ?? this.currentTokenElevation
   }
 
@@ -49,13 +49,13 @@ class WallHeightUtils{
     }
   }
 
-  get currentTokenElevation(){
+  get currentTokenElevation() {
     return this._currentTokenElevation;
   }
 
   schedulePerceptionUpdate(reinitializeLightSources = true) {
     if (!canvas.ready) return;
-    if(reinitializeLightSources) this.reinitializeLightSources();
+    if (reinitializeLightSources) this.reinitializeLightSources();
     canvas.perception.update({
 
       initializeLightSources: true,
@@ -70,14 +70,14 @@ class WallHeightUtils{
 
   //Revisit if performance issues
   reinitializeLightSources() {
-    if(game.Levels3DPreview?._active) return;
+    if (game.Levels3DPreview?._active) return;
     canvas.lighting.placeables.forEach(l => l.initializeLightSource());
     canvas.tokens.placeables.forEach(t => t.initializeLightSource());
     this.processRegions();
   }
 
   processRegions() {
-    if(!canvas.visibility.vision) return;
+    if (!canvas.visibility.vision) return;
     const regionMeshes = canvas.effects.illumination.darknessLevelMeshes.children.concat(canvas.visibility.vision.light.global.meshes.children);
     for (const mesh of regionMeshes) {
       if (!(mesh instanceof foundry.canvas.regions.RegionMesh)) continue;
@@ -86,7 +86,7 @@ class WallHeightUtils{
         mesh.visible = true;
         continue;
       }
-      
+
       const top = mesh.region.document.elevation.top ?? Infinity;
       const bottom = mesh.region.document.elevation.bottom ?? -Infinity;
       mesh.visible = currentLos >= bottom && currentLos <= top;
@@ -148,95 +148,95 @@ class WallHeightUtils{
     if (document instanceof foundry.canvas.placeables.TokenDocument) {
       const bottom = document.elevation;
       const top = document.object
-      ? document.object.losHeight
-      : bottom;
+        ? document.object.losHeight
+        : bottom;
       return { bottom, top };
     }
     return getLevelsBounds(document);
   }
 
-  async removeOneToWalls(scene){
-    if(!scene) scene = canvas.scene;
+  async removeOneToWalls(scene) {
+    if (!scene) scene = canvas.scene;
     const walls = Array.from(scene.walls);
     const updates = [];
-    for(let wall of walls){
+    for (let wall of walls) {
       const oldTop = wall.document.flags?.["wall-height"]?.top;
-      if(oldTop != null && oldTop != undefined){
+      if (oldTop != null && oldTop != undefined) {
         const newTop = oldTop - 1;
-        updates.push({_id: wall.id, "flags.wall-height.top": newTop});
+        updates.push({ _id: wall.id, "flags.wall-height.top": newTop });
       }
     }
-    if(updates.length <= 0) return false;
+    if (updates.length <= 0) return false;
     await scene.updateEmbeddedDocuments("Wall", updates);
     ui.notifications.notify("Wall Height - Added +1 to " + updates.length + " walls in scene " + scene.name);
     return true;
   }
 
-  async migrateTokenHeight(){
+  async migrateTokenHeight() {
     return await migrateTokenHeight();
   }
 
-  async migrateData(scene){
+  async migrateData(scene) {
     return await migrateData(scene);
   }
 
-  async migrateCompendiums (){
-      let migratedScenes = 0;
-      const compendiums = Array.from(game.packs).filter(p => p.documentName === 'Scene');
-      for (const compendium of compendiums) {
-        const scenes = await compendium.getDocuments();
-        for(const scene of scenes){
-          const migrated = await migrateData(scene);
-          if(migrated) migratedScenes++;
-        }
-      }
-      if(migratedScenes > 0){
-          ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-          console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-      }else{
-          ui.notifications.notify(`Wall Height - No scenes to migrate.`);
-          console.log(`Wall Height - No scenes to migrate.`);
-      }
-      return migratedScenes;
-  }
-
-  async migrateScenes (){
-      const scenes = Array.from(game.scenes);
-      let migratedScenes = 0;
-      ui.notifications.warn("Wall Height - Migrating all scenes, do not refresh the page!");
-      for(const scene of scenes){
+  async migrateCompendiums() {
+    let migratedScenes = 0;
+    const compendiums = Array.from(game.packs).filter(p => p.documentName === 'Scene');
+    for (const compendium of compendiums) {
+      const scenes = await compendium.getDocuments();
+      for (const scene of scenes) {
         const migrated = await migrateData(scene);
-        if(migrated) migratedScenes++;
+        if (migrated) migratedScenes++;
       }
-      if(migratedScenes > 0){
-        ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-        console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
-      }else{
-          ui.notifications.notify(`Wall Height - No scenes to migrate.`);
-          console.log(`Wall Height - No scenes to migrate.`);
-      }
-      return migratedScenes;
+    }
+    if (migratedScenes > 0) {
+      ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
+      console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
+    } else {
+      ui.notifications.notify(`Wall Height - No scenes to migrate.`);
+      console.log(`Wall Height - No scenes to migrate.`);
+    }
+    return migratedScenes;
   }
 
-  async migrateAll(){
-      ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas and Token Attacher to be updated!`);
-      await WallHeight.migrateScenes();
-      await WallHeight.migrateCompendiums();
-      ui.notifications.notify(`Wall Height - Migration Complete.`);
-      await game.settings.set(MODULE_ID, 'migrateOnStartup', false);
+  async migrateScenes() {
+    const scenes = Array.from(game.scenes);
+    let migratedScenes = 0;
+    ui.notifications.warn("Wall Height - Migrating all scenes, do not refresh the page!");
+    for (const scene of scenes) {
+      const migrated = await migrateData(scene);
+      if (migrated) migratedScenes++;
+    }
+    if (migratedScenes > 0) {
+      ui.notifications.notify(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
+      console.log(`Wall Height - Migrated ${migratedScenes} scenes to new Wall Height data structure.`);
+    } else {
+      ui.notifications.notify(`Wall Height - No scenes to migrate.`);
+      console.log(`Wall Height - No scenes to migrate.`);
+    }
+    return migratedScenes;
   }
 
-  async setWallBounds(bottom, top, walls){
-    if(!walls) walls = canvas.walls.controlled.length ? canvas.walls.controlled : canvas.walls.placeables;
+  async migrateAll() {
+    ui.notifications.error(`Wall Height - WARNING: The new data structure requires Better Roofs, Levels and 3D Canvas and Token Attacher to be updated!`);
+    await WallHeight.migrateScenes();
+    await WallHeight.migrateCompendiums();
+    ui.notifications.notify(`Wall Height - Migration Complete.`);
+    await game.settings.set(MODULE_ID, 'migrateOnStartup', false);
+  }
+
+  async setWallBounds(bottom, top, walls) {
+    if (!walls) walls = canvas.walls.controlled.length ? canvas.walls.controlled : canvas.walls.placeables;
     walls instanceof Array || (walls = [walls]);
     const updates = [];
-    for(let wall of walls){
-      updates.push({_id: wall.id, "flags.wall-height.top": top, "flags.wall-height.bottom": bottom});
+    for (let wall of walls) {
+      updates.push({ _id: wall.id, "flags.wall-height.top": top, "flags.wall-height.bottom": bottom });
     }
     return await canvas.scene.updateEmbeddedDocuments("Wall", updates);
   }
 
-  getWallBounds(wall){
+  getWallBounds(wall) {
     return getWallBounds(wall);
   }
 
@@ -286,24 +286,29 @@ export function registerWrappers() {
     if (!wall || !result) return result;
     const { advancedVision } = getSceneSettings(canvas.scene);
     if (!advancedVision) return result;
-    const {top, bottom} = getWallBounds(wall);
+    const { top, bottom } = getWallBounds(wall);
     const object = this.config?.source?.object ?? this.origin?.object ?? this.object;
     if (!object) return result;
     const b = object?.b ?? object?.elevation ?? -Infinity;
     const t = object?.t ?? object?.elevation ?? +Infinity;
     return b >= bottom && t <= top;
-  } 
+  }
 
   function isDoorVisible(wrapped, ...args) {
     const wall = this.wall;
+    const result = wrapped(...args);
     const { advancedVision } = getSceneSettings(wall.scene);
     const isUI = CONFIG.Levels?.UI?.rangeEnabled && !canvas?.tokens?.controlled[0];
-    const elevation = WallHeight.currentTokenElevation ?? (isUI ?  CONFIG.Levels?.UI?.currentRange?.bottom ?? null : null)
-    if (elevation == null || !advancedVision) return wrapped(...args);
-    const {top, bottom} = getWallBounds(wall);
+    const elevation = WallHeight.currentTokenElevation ?? (isUI ? CONFIG.Levels?.UI?.currentRange?.bottom ?? null : null)
+    if (elevation == null || !advancedVision) {
+      this.wall.doorMeshes.forEach(d => d.visible = result);
+      return result;
+    }
+    const { top, bottom } = getWallBounds(wall);
     let inRange = elevation >= bottom && elevation <= top;
     if (isUI) inRange = elevation >= bottom && elevation < top;
-    return wrapped(...args) && inRange;
+    this.wall.doorMeshes.forEach(d => d.visible = result && inRange);
+    return result && inRange;
   }
 
   function setSourceElevation(wrapped, origin, config = {}, ...args) {
@@ -335,7 +340,7 @@ export function registerWrappers() {
         }
       }
     }
-    if(object){
+    if (object) {
       object.b = origin.b ?? config.b ?? bottom;
       object.t = origin.t ?? config.t ?? top;
     }
@@ -351,8 +356,8 @@ export function registerWrappers() {
   function drawWallRange(wrapped, ...args) {
     const { advancedVision } = getSceneSettings(canvas.scene);
     const bounds = getWallBounds(this);
-    if(!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
-      if(this.line) this.line.children = this.line.children.filter(c => c.name !== "wall-height-text");
+    if (!WallHeight._enableWallText || !advancedVision || (bounds.top == Infinity && bounds.bottom == -Infinity)) {
+      if (this.line) this.line.children = this.line.children.filter(c => c.name !== "wall-height-text");
       return wrapped(...args);
 
     }
@@ -360,20 +365,20 @@ export function registerWrappers() {
     const style = CONFIG.canvasTextStyle.clone();
     style.fontSize /= 1.5;
     style.fill = this._getWallColor();
-    if(bounds.top == Infinity) bounds.top = "Inf";
-    if(bounds.bottom == -Infinity) bounds.bottom = "-Inf";
+    if (bounds.top == Infinity) bounds.top = "Inf";
+    if (bounds.bottom == -Infinity) bounds.bottom = "-Inf";
     const range = `${bounds.top} / ${bounds.bottom}`;
     const oldText = this.line.children.find(c => c.name === "wall-height-text");
     const text = oldText ?? new foundry.canvas.containers.PreciseText(range, style);
     text.text = range;
     text.name = "wall-height-text";
     text.interactiveChildren = false;
-    let angle = (Math.atan2( this.coords[3] - this.coords[1], this.coords[2] - this.coords[0] ) * ( 180 / Math.PI ));
-    angle = (angle+90)%180 - 90;
+    let angle = (Math.atan2(this.coords[3] - this.coords[1], this.coords[2] - this.coords[0]) * (180 / Math.PI));
+    angle = (angle + 90) % 180 - 90;
     text.position.set(this.center.x, this.center.y);
     text.anchor.set(0.5, 0.5);
     text.angle = angle;
-    if(!oldText) this.line.addChild(text)//this.addChild(text);
+    if (!oldText) this.line.addChild(text)//this.addChild(text);
   }
 
   Hooks.on("updateToken", () => {
@@ -399,26 +404,26 @@ export function registerWrappers() {
   });
 
   Hooks.on("updateWall", (wall, updates) => {
-    if(updates.flags && updates.flags[MODULE_ID]) {
+    if (updates.flags && updates.flags[MODULE_ID]) {
       WallHeight.schedulePerceptionUpdate(false);
     }
-    if(canvas.walls.active) wall.object.refresh();
+    if (canvas.walls.active) wall.object.refresh();
   })
 
   Hooks.on("activateWallsLayer", () => {
     canvas.walls.placeables.forEach(w => w.refresh());
   });
 
-  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.elevation", function(wrapped, ...args) {
-     const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
-     if(!Number.isFinite(bottom)) return wrapped(...args);
-     return bottom + 0.001;
-    }, "MIXED", { perf_mode: "FAST" });
-  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.sort", function(wrapped, ...args) {
-     const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
-      if(!Number.isFinite(bottom)) return wrapped(...args);
-     return Infinity;
-    }, "MIXED", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.elevation", function (wrapped, ...args) {
+    const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
+    if (!Number.isFinite(bottom)) return wrapped(...args);
+    return bottom + 0.001;
+  }, "MIXED", { perf_mode: "FAST" });
+  libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorMesh.prototype.sort", function (wrapped, ...args) {
+    const bottom = this.object.document.flags?.[MODULE_ID]?.bottom;
+    if (!Number.isFinite(bottom)) return wrapped(...args);
+    return Infinity;
+  }, "MIXED", { perf_mode: "FAST" });
 
 
   libWrapper.register(MODULE_ID, "foundry.canvas.containers.DoorControl.prototype.isVisible", isDoorVisible, "MIXED");
