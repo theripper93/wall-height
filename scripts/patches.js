@@ -106,12 +106,12 @@ class WallHeightUtils {
   }
 
   async setSourceElevationTop(document, value) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) return;
+    if (document instanceof TokenDocument) return;
     return await document.update({ "flags.levels.rangeTop": value });
   }
 
   getSourceElevationTop(document) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) return document.object.losHeight
+    if (document instanceof TokenDocument) return document.object.losHeight
     return document.document.flags?.levels?.rangeTop ?? document.document.elevation ?? +Infinity;
   }
 
@@ -124,12 +124,12 @@ class WallHeightUtils {
   }
 
   async setSourceElevationBounds(document, bottom, top) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) return await document.update({ "elevation": bottom });
+    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
     return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
   }
 
   getSourceElevationBounds(document) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) {
+    if (document instanceof TokenDocument) {
       const bottom = document.document.elevation;
       const top = document.object
         ? document.object.losHeight
@@ -140,12 +140,12 @@ class WallHeightUtils {
   }
 
   async setSourceElevationBounds(document, bottom, top) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) return await document.update({ "elevation": bottom });
+    if (document instanceof TokenDocument) return await document.update({ "elevation": bottom });
     return await document.update({ "flags.levels.rangeBottom": bottom, "flags.levels.rangeTop": top });
   }
 
   getSourceElevationBounds(document) {
-    if (document instanceof foundry.canvas.placeables.TokenDocument) {
+    if (document instanceof TokenDocument) {
       const bottom = document.elevation;
       const top = document.object
         ? document.object.losHeight
