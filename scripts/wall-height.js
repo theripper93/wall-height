@@ -204,6 +204,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 });
 
 const renderTokenConfig = (app, html, data) => {
+    if(html.querySelector(`input[name="flags.${MODULE_SCOPE}.tokenHeight"]`)) return;
     const tokenHeight = app.token.getFlag(MODULE_SCOPE, "tokenHeight") || 0;
     const label = game.i18n.localize(`${MODULE_SCOPE}.tokenHeightLabel`);
     const losHeight = app.document?.object?.losHeight ?? 0;
